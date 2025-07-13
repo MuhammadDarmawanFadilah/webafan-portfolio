@@ -1,253 +1,245 @@
-# WebProfile Afan
+# WebAfan Portfolio
 
-## Deskripsi Proyek
-Website profile profesional modern untuk M. Darmawan Fadilah S.Kom, M.Kom (Senior Developer) yang dibangun menggunakan teknologi terkini dengan desain yang mengikuti tren 2024-2025.
+Full stack web portfolio application dengan Spring Boot backend dan React frontend.
 
-## Technology Stack
-
-### Frontend
-- **React 18+** dengan TypeScript
-- **shadcn/ui** - Modern UI component library
-- **Tailwind CSS** - Utility-first CSS framework
-- **Vite** - Fast build tool
-- **Lucide React** - Beautiful icons
+## 🚀 Teknologi yang Digunakan
 
 ### Backend
-- **Java 21** dengan Spring Boot 3.x
-- **Spring Data JPA** - Database abstraction
-- **H2 Database** - In-memory database untuk development
-- **Spring Security** - Authentication & authorization
-- **Maven** - Dependency management
-
-### Tools & Libraries
-- **Lombok** - Reduce boilerplate code
-- **Jackson** - JSON processing
+- **Spring Boot 3.2.1** - Framework Java untuk REST API
+- **Spring Security** - Autentikasi dan autorisasi
+- **Spring Data JPA** - ORM untuk database
+- **MySQL** - Database relational
 - **JWT** - Token-based authentication
-- **CORS** - Cross-origin resource sharing
+- **Maven** - Build tool dan dependency management
 
-## Struktur Proyek
+### Frontend
+- **React 18** - Library JavaScript untuk UI
+- **TypeScript** - Type-safe JavaScript
+- **Vite** - Build tool dan dev server
+- **Tailwind CSS** - Utility-first CSS framework
+- **Radix UI** - Komponen UI yang accessible
+- **React Router DOM** - Client-side routing
+
+## 📁 Struktur Proyek
 
 ```
-webprofile-afan/
-├── backend/                 # Spring Boot API
+webafan/
+├── backend/                 # Spring Boot application
 │   ├── src/main/java/
 │   │   └── com/webafan/portfolio/
 │   │       ├── controller/  # REST controllers
+│   │       ├── model/       # Entity models
+│   │       ├── repository/  # Data repositories
 │   │       ├── service/     # Business logic
-│   │       ├── repository/  # Data access layer
-│   │       ├── entity/      # JPA entities
-│   │       ├── dto/         # Data transfer objects
-│   │       └── config/      # Configuration classes
-│   └── pom.xml             # Maven dependencies
-└── frontend/               # React application
-    ├── src/
-    │   ├── components/     # React components
-    │   │   ├── ui/         # shadcn/ui components
-    │   │   └── admin/      # Admin panel components
-    │   ├── lib/           # Utility functions
-    │   └── assets/        # Static assets
-    └── package.json       # npm dependencies
+│   │       └── util/        # Utility classes
+│   ├── src/main/resources/
+│   │   └── application.properties
+│   └── pom.xml
+├── frontend/                # React application
+│   ├── src/
+│   │   ├── components/      # React components
+│   │   │   ├── admin/       # Admin panel components
+│   │   │   └── ui/          # Reusable UI components
+│   │   ├── lib/             # Utility functions
+│   │   └── main.tsx         # Entry point
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.ts
+└── README.md
 ```
 
-## Setup & Installation
+## 🛠️ Setup dan Instalasi
 
 ### Prerequisites
-- Node.js 18+ dan npm
-- Java 21+
-- Maven 3.6+
+- Java 17 atau lebih tinggi
+- Node.js 18 atau lebih tinggi
+- MySQL 8.0 atau lebih tinggi
+- Maven 3.6 atau lebih tinggi
 
 ### Backend Setup
+
+1. Clone repository:
+```bash
+git clone https://github.com/MuhammadDarmawanFadilah/webafan-portfolio.git
+cd webafan-portfolio
+```
+
+2. Setup database MySQL:
+```sql
+CREATE DATABASE webafan_portfolio;
+```
+
+3. Konfigurasi database di `backend/src/main/resources/application.properties`:
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/webafan_portfolio
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+```
+
+4. Jalankan backend:
 ```bash
 cd backend
-mvn clean install
 mvn spring-boot:run
 ```
-Backend akan berjalan di: http://localhost:8080
+
+Backend akan berjalan di `http://localhost:8080`
 
 ### Frontend Setup
+
+1. Install dependencies:
 ```bash
 cd frontend
 npm install
+```
+
+2. Jalankan development server:
+```bash
 npm run dev
 ```
-Frontend akan berjalan di: http://localhost:5173
 
-## Authentication
+Frontend akan berjalan di `http://localhost:5173`
 
-### Default Admin User
-- **Username**: afan
-- **Password**: P@ssw0rd
-- **Role**: ADMIN
+## 🔧 Environment Variables
 
-### API Endpoints
+Buat file `.env` di direktori `backend/src/main/resources/` dengan konfigurasi berikut:
+
+```properties
+# Database
+DB_URL=jdbc:mysql://localhost:3306/webafan_portfolio
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+
+# JWT
+JWT_SECRET=your_jwt_secret_key
+JWT_EXPIRATION=86400000
+
+# CORS
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173,http://localhost:5174
+```
+
+## 📊 Fitur Utama
+
+### Public Features
+- ✅ Landing page dengan hero section
+- ✅ About section dengan informasi personal
+- ✅ Skills showcase dengan kategori
+- ✅ Experience timeline
+- ✅ Education history
+- ✅ Projects portfolio
+- ✅ Contact information
+- ✅ Responsive design
+
+### Admin Features
+- ✅ Secure login dengan JWT
+- ✅ Dashboard admin
+- ✅ Profile management
+- ✅ Skills management
+- ✅ Experience management
+- ✅ Education management
+- ✅ Projects management
+- ✅ Achievements management
+
+## 🔐 Autentikasi
+
+Aplikasi menggunakan JWT (JSON Web Token) untuk autentikasi:
+- Token disimpan di localStorage
+- Automatic token refresh
+- Protected routes untuk admin panel
+- CORS configuration untuk multiple origins
+
+## 🎨 Design System
+
+- **Color Scheme**: Modern dark/light theme
+- **Typography**: Clean dan readable fonts
+- **Components**: Reusable UI components dengan Radix UI
+- **Responsive**: Mobile-first approach
+- **Accessibility**: WCAG compliant components
+
+## 📱 API Endpoints
+
+### Authentication
 - `POST /api/auth/login` - User login
-- `GET /api/auth/debug` - Debug user information
-- `POST /api/auth/test-password` - Test password encoding
+- `POST /api/auth/validate` - Token validation
+- `POST /api/auth/logout` - User logout
 
-## Features
+### Profile
+- `GET /api/profile` - Get profile data
+- `PUT /api/profile` - Update profile
 
-### Frontend Features
-- ✅ Modern Hero section dengan professional layout
-- ✅ Responsive design dengan mobile-first approach
-- ✅ Professional color scheme dengan emerald theme
-- ✅ Fixed navigation header dengan backdrop blur
-- ✅ Contact information dan action buttons
-- ✅ Skills showcase dengan badge components
-- ✅ Statistics cards dengan colorful backgrounds
-- ✅ Admin login system
-- ⏳ About Me section (in progress)
-- ⏳ Experience timeline
-- ⏳ Education section
-- ⏳ Achievements/Certifications
-- ⏳ Contact form
-
-### Backend Features
-- ✅ RESTful API dengan Spring Boot
-- ✅ JWT-based authentication
-- ✅ User management system
-- ✅ Database seeding dengan sample data
-- ✅ CORS configuration
-- ✅ Error handling dan validation
-- ✅ Profile, Experience, Education, Skills, Achievements entities
-
-## Design Principles
-
-1. **Minimalist Design** - Clean layout dengan optimal whitespace
-2. **Personal Touch** - Menampilkan kepribadian melalui konten personal
-3. **Modern Typography** - Bold, expressive typefaces
-4. **Responsive Design** - Mobile-first approach
-5. **Subtle Animations** - Microinteractions untuk enhanced UX
-6. **Professional Color Scheme** - Emerald sebagai primary color
-7. **Interactive Elements** - Hover effects dan engaging interactions
-
-## API Documentation
-
-### Profile Endpoints
-- `GET /api/profiles` - Get all profiles
-- `GET /api/profiles/{id}` - Get profile by ID
-- `POST /api/profiles` - Create new profile
-- `PUT /api/profiles/{id}` - Update profile
-- `DELETE /api/profiles/{id}` - Delete profile
-
-### Experience Endpoints
-- `GET /api/experiences` - Get all experiences
-- `GET /api/experiences/{id}` - Get experience by ID
-- `POST /api/experiences` - Create new experience
-- `PUT /api/experiences/{id}` - Update experience
-- `DELETE /api/experiences/{id}` - Delete experience
-
-### Education Endpoints
-- `GET /api/educations` - Get all educations
-- `GET /api/educations/{id}` - Get education by ID
-- `POST /api/educations` - Create new education
-- `PUT /api/educations/{id}` - Update education
-- `DELETE /api/educations/{id}` - Delete education
-
-### Skills Endpoints
+### Skills
 - `GET /api/skills` - Get all skills
-- `GET /api/skills/{id}` - Get skill by ID
-- `POST /api/skills` - Create new skill
+- `POST /api/skills` - Create skill
 - `PUT /api/skills/{id}` - Update skill
 - `DELETE /api/skills/{id}` - Delete skill
 
-### Achievements Endpoints
+### Experience
+- `GET /api/experience` - Get all experiences
+- `POST /api/experience` - Create experience
+- `PUT /api/experience/{id}` - Update experience
+- `DELETE /api/experience/{id}` - Delete experience
+
+### Education
+- `GET /api/education` - Get all education
+- `POST /api/education` - Create education
+- `PUT /api/education/{id}` - Update education
+- `DELETE /api/education/{id}` - Delete education
+
+### Projects
+- `GET /api/projects` - Get all projects
+- `POST /api/projects` - Create project
+- `PUT /api/projects/{id}` - Update project
+- `DELETE /api/projects/{id}` - Delete project
+
+### Achievements
 - `GET /api/achievements` - Get all achievements
-- `GET /api/achievements/{id}` - Get achievement by ID
-- `POST /api/achievements` - Create new achievement
+- `POST /api/achievements` - Create achievement
 - `PUT /api/achievements/{id}` - Update achievement
 - `DELETE /api/achievements/{id}` - Delete achievement
 
-## Development Guidelines
+## 🚀 Deployment
 
-### Code Style
-- Gunakan TypeScript untuk type safety
-- Follow React best practices
-- Gunakan functional components dengan hooks
-- Implement proper error handling
-- Write clean, readable code dengan comments
-
-### Component Structure
-- Gunakan shadcn/ui components untuk consistency
-- Implement responsive design dengan Tailwind CSS
-- Separate concerns (UI, logic, data)
-- Use proper prop types dan interfaces
-
-### Backend Guidelines
-- Follow Spring Boot conventions
-- Implement proper exception handling
-- Use DTOs untuk API responses
-- Validate input data
-- Follow RESTful API principles
-
-## Environment Variables
-
-### Backend (.env atau application.properties)
-```properties
-# Database Configuration
-spring.datasource.url=jdbc:h2:mem:testdb
-spring.datasource.username=sa
-spring.datasource.password=
-
-# JWT Configuration
-jwt.secret=mySecretKey
-jwt.expiration=86400000
-
-# Server Configuration
-server.port=8080
+### Backend Deployment
+1. Build aplikasi:
+```bash
+mvn clean package
 ```
 
-### Frontend (.env)
-```env
-VITE_API_BASE_URL=http://localhost:8080/api
+2. Deploy JAR file ke server
+
+### Frontend Deployment
+1. Build untuk production:
+```bash
+npm run build
 ```
 
-## Sample Profile Data
+2. Deploy folder `dist` ke web server
 
-### Personal Information
-- **Name**: M. Darmawan Fadilah S.Kom, M.Kom
-- **Title**: Senior Developer
-- **Email**: muhammaddarmawan@gmail.com
-- **Phone**: +62 856 0012 7 856
-- **Location**: Palangka Raya, 08 Desember 1997
+## 🤝 Contributing
 
-### Professional Experience
-1. **Senior Developer** (2020-2024) - PT. Graha Sarana Duta
-2. **Junior Java Developer** (2019-2020) - PT. Askrindo Syariah
+1. Fork repository
+2. Buat feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
+4. Push ke branch (`git push origin feature/AmazingFeature`)
+5. Buat Pull Request
 
-### Education
-1. **Master of Computer Science** (2022-2024) - ITS, GPA: 3.81/4.00
-2. **Bachelor of Computer Science** (2015-2019) - Unsoed, GPA: 3.65/4.00
+## 📄 License
 
-### Technical Skills
-- Java (92%), Spring Boot (90%), JavaScript (85%)
-- Oracle (90%), SQL Server (90%), Git (90%)
-- Angular (80%), CSS (80%), Jenkins (80%)
-- Windows (90%), Linux (85%), SSIS (90%)
+Distributed under the MIT License. See `LICENSE` for more information.
 
-## Contributing
+## 📞 Contact
 
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+**Muhammad Darmawan Fadilah**
+- GitHub: [@MuhammadDarmawanFadilah](https://github.com/MuhammadDarmawanFadilah)
+- Email: your.email@example.com
 
-## License
+## 🙏 Acknowledgments
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Author
-
-**M. Darmawan Fadilah S.Kom, M.Kom**
-- Email: muhammaddarmawan@gmail.com
-- Phone: +62 856 0012 7 856
-- LinkedIn: [Profile Link]
-- GitHub: [Profile Link]
+- [Spring Boot](https://spring.io/projects/spring-boot)
+- [React](https://reactjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Radix UI](https://www.radix-ui.com/)
+- [Vite](https://vitejs.dev/)
 
 ---
 
-**Project Status**: ✅ Backend Complete | ⏳ Frontend In Progress (60% completed)
-
-**Last Updated**: December 2024
-
-**Version**: 1.0.0
+⭐ Jangan lupa untuk memberikan star jika project ini membantu Anda!
