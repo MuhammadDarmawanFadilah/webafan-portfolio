@@ -2,7 +2,6 @@ package com.webafan.portfolio.config;
 
 import com.webafan.portfolio.entity.*;
 import com.webafan.portfolio.repository.*;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -19,14 +18,16 @@ public class DataSeeder implements CommandLineRunner {
     private final EducationRepository educationRepository;
     private final SkillRepository skillRepository;
     private final AchievementRepository achievementRepository;
+    private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     
-    public DataSeeder(ProfileRepository profileRepository, 
+    public DataSeeder(ProfileRepository profileRepository,
                      ExperienceRepository experienceRepository,
                      EducationRepository educationRepository,
                      SkillRepository skillRepository,
                      AchievementRepository achievementRepository,
+                     ProjectRepository projectRepository,
                      UserRepository userRepository,
                      PasswordEncoder passwordEncoder) {
         this.profileRepository = profileRepository;
@@ -34,6 +35,7 @@ public class DataSeeder implements CommandLineRunner {
         this.educationRepository = educationRepository;
         this.skillRepository = skillRepository;
         this.achievementRepository = achievementRepository;
+        this.projectRepository = projectRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -41,12 +43,15 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (profileRepository.count() == 0) {
+            System.out.println("Initializing portfolio database with seed data...");
             seedData();
+            System.out.println("Portfolio database initialization completed successfully");
         }
         
-        // Create admin user if not exists
         if (userRepository.count() == 0) {
+            System.out.println("Creating default admin user...");
             createAdminUser();
+            System.out.println("Admin user created successfully");
         }
     }
     
@@ -66,7 +71,10 @@ public class DataSeeder implements CommandLineRunner {
         // Create achievements
         createAchievements(profile);
         
-        System.out.println("✅ Database seeded with M. Darmawan Fadilah's portfolio data");
+        // Create projects
+        createProjects(profile);
+        
+        System.out.println("Portfolio data seeding completed successfully");
     }
     
     private Profile createMainProfile() {
@@ -76,13 +84,13 @@ public class DataSeeder implements CommandLineRunner {
         profile.setEmail("muhammaddarmawan@gmail.com");
         profile.setPhone("+62 856 0012 7 856");
         profile.setBirthDate(LocalDate.of(1997, 12, 8));
-        profile.setBirthPlace("Palangka Raya");
+        profile.setBirthPlace("Palangka Raya, 08 Desember 1997");
         profile.setAddress("Bukit Nusa Indah, Jl. Cempaka kav. 248, Rt.05 Rw.13 kel. senja, Kec. ciputat, Tangerang Selatan");
         profile.setCurrentAddress("Griya Satria Indah 02 Blok M No. 19 Rt 03 Rw. 10 Sukamakmur, Purwokerto Utara, Banyumas, Jawa Tengah (53125)");
-        profile.setAbout("Experienced Senior Developer with 5+ years in Java programming, Spring Boot, and full-stack development. " +
-                "Proven track record in designing, debugging, and maintaining complex applications. " +
-                "Strong communication skills and AI utilization for efficient task completion. " +
-                "Committed to continuous learning, responsibility, and delivering high-quality solutions.");
+        profile.setAbout("Tracing, logs and debugging programs have become parts of my daily tasks. " +
+                "Effective communication and the use of AI are crucial in the task completion. " +
+                "Continuous learning, responsibility, and hard work are also essential to achieving " +
+                "my vision and mission");
         profile.setYearsExperience(5);
         
         return profileRepository.save(profile);
@@ -90,40 +98,39 @@ public class DataSeeder implements CommandLineRunner {
     
     private void createExperiences(Profile profile) {
         Experience exp1 = new Experience();
-        exp1.setJobTitle("Senior Developer");
-        exp1.setCompanyName("PT. Graha Sarana Duta");
+        exp1.setJobTitle("Junior Java Developer");
+        exp1.setCompanyName("PT. Askrindo Syariah | Jakarta, Indonesia");
         exp1.setCompanyLocation("Jakarta, Indonesia");
-        exp1.setStartDate(LocalDate.of(2020, 1, 1));
-        exp1.setEndDate(LocalDate.of(2024, 12, 31));
+        exp1.setStartDate(LocalDate.of(2019, 1, 1));
+        exp1.setEndDate(LocalDate.of(2020, 12, 31));
         exp1.setIsCurrent(false);
-        exp1.setDescription("Leading application development and maintenance projects. " +
-                "Responsible for system design, code review, and team collaboration. " +
-                "Handling complex technical challenges and ensuring high-quality deliverables.");
-        exp1.setTechnologiesUsed("Java, Spring Boot, Oracle, SQL Server, Angular, Git, Jenkins");
-        exp1.setKeyAchievements("• Successfully delivered multiple enterprise applications\n" +
-                "• Improved system performance by 30%\n" +
-                "• Led a team of 3 junior developers\n" +
-                "• Implemented CI/CD pipelines");
-        exp1.setDisplayOrder(1);
-        exp1.setProfile(profile);
-        
-        Experience exp2 = new Experience();
-        exp2.setJobTitle("Junior Java Developer");
-        exp2.setCompanyName("PT. Askrindo Syariah");
-        exp2.setCompanyLocation("Jakarta, Indonesia");
-        exp2.setStartDate(LocalDate.of(2019, 1, 1));
-        exp2.setEndDate(LocalDate.of(2020, 12, 31));
-        exp2.setIsCurrent(false);
-        exp2.setDescription("Started as a bootcamp participant and progressed to a tester role. " +
-                "Gained hands-on experience in Java development and software testing. " +
-                "Learned industry best practices and development methodologies.");
-        exp2.setTechnologiesUsed("Java, Spring Framework, MySQL, JUnit, Selenium");
-        exp2.setKeyAchievements("• Completed intensive Java bootcamp program\n" +
+        exp1.setDescription("It started with a bootcamp, leading me to roles as a Junior Technical " +
+                "Analyst, and for a year in IT Product Developer for back office applications.");
+        exp1.setTechnologiesUsed("Java, Spring Framework, MySQL, JUnit, Selenium");
+        exp1.setKeyAchievements("• Completed intensive Java bootcamp program\n" +
                 "• Transitioned from trainee to full-time developer\n" +
                 "• Contributed to testing automation framework\n" +
                 "• Gained experience in Agile development");
+        exp1.setDisplayOrder(1);
+        exp1.setProfileId(profile.getId());
+        
+        Experience exp2 = new Experience();
+        exp2.setJobTitle("Senior Developer");
+        exp2.setCompanyName("PT. Graha Life Insurance | Jakarta, Indonesia");
+        exp2.setCompanyLocation("Jakarta, Indonesia");
+        exp2.setStartDate(LocalDate.of(2020, 1, 1));
+        exp2.setEndDate(LocalDate.of(2024, 7, 31));
+        exp2.setIsCurrent(false);
+        exp2.setDescription("For the past four years, I have served as a senior IT developer, actively " +
+                "engaged in end-to-end handling many of applications within this company.");
+        exp2.setTechnologiesUsed("Java, Spring Boot, Oracle, SQL Server, Angular, Git, Jenkins, SSIS");
+        exp2.setKeyAchievements("• Successfully delivered multiple enterprise applications\n" +
+                "• Improved system performance by 30%\n" +
+                "• Led a team of 3 junior developers\n" +
+                "• Implemented CI/CD pipelines\n" +
+                "• Developed and maintained complex database integrations");
         exp2.setDisplayOrder(2);
-        exp2.setProfile(profile);
+        exp2.setProfileId(profile.getId());
         
         experienceRepository.saveAll(List.of(exp1, exp2));
     }
@@ -141,7 +148,7 @@ public class DataSeeder implements CommandLineRunner {
         edu1.setMaxGpa(new BigDecimal("4.00"));
         edu1.setDescription("Advanced studies in computer science with focus on software engineering and system design.");
         edu1.setDisplayOrder(1);
-        edu1.setProfile(profile);
+        edu1.setProfileId(profile.getId());
         
         Education edu2 = new Education();
         edu2.setDegree("Bachelor of Computer Science");
@@ -155,7 +162,7 @@ public class DataSeeder implements CommandLineRunner {
         edu2.setMaxGpa(new BigDecimal("4.00"));
         edu2.setDescription("Comprehensive undergraduate program covering programming, algorithms, database systems, and software development.");
         edu2.setDisplayOrder(2);
-        edu2.setProfile(profile);
+        edu2.setProfileId(profile.getId());
         
         educationRepository.saveAll(List.of(edu1, edu2));
     }
@@ -170,7 +177,7 @@ public class DataSeeder implements CommandLineRunner {
         java.setDescription("Core programming language for enterprise applications");
         java.setDisplayOrder(1);
         java.setIsFeatured(true);
-        java.setProfile(profile);
+        java.setProfileId(profile.getId());
         
         Skill javascript = new Skill();
         javascript.setSkillName("JavaScript");
@@ -180,7 +187,7 @@ public class DataSeeder implements CommandLineRunner {
         javascript.setDescription("Frontend and backend development");
         javascript.setDisplayOrder(2);
         javascript.setIsFeatured(true);
-        javascript.setProfile(profile);
+        javascript.setProfileId(profile.getId());
         
         Skill php = new Skill();
         php.setSkillName("PHP");
@@ -189,8 +196,29 @@ public class DataSeeder implements CommandLineRunner {
         php.setYearsExperience(3);
         php.setDescription("Web development and scripting");
         php.setDisplayOrder(3);
-        php.setIsFeatured(false);
-        php.setProfile(profile);
+        php.setIsFeatured(true);
+        php.setProfileId(profile.getId());
+        
+        // Web Technologies
+        Skill html = new Skill();
+        html.setSkillName("HTML");
+        html.setSkillCategory("Web Technologies");
+        html.setProficiencyLevel(80);
+        html.setYearsExperience(5);
+        html.setDescription("Markup language for web development");
+        html.setDisplayOrder(4);
+        html.setIsFeatured(true);
+        html.setProfileId(profile.getId());
+        
+        Skill css = new Skill();
+        css.setSkillName("CSS");
+        css.setSkillCategory("Web Technologies");
+        css.setProficiencyLevel(80);
+        css.setYearsExperience(5);
+        css.setDescription("Styling and layout for web applications");
+        css.setDisplayOrder(5);
+        css.setIsFeatured(true);
+        css.setProfileId(profile.getId());
         
         // Frameworks
         Skill springBoot = new Skill();
@@ -199,9 +227,9 @@ public class DataSeeder implements CommandLineRunner {
         springBoot.setProficiencyLevel(90);
         springBoot.setYearsExperience(4);
         springBoot.setDescription("Java framework for building enterprise applications");
-        springBoot.setDisplayOrder(4);
+        springBoot.setDisplayOrder(6);
         springBoot.setIsFeatured(true);
-        springBoot.setProfile(profile);
+        springBoot.setProfileId(profile.getId());
         
         Skill angular = new Skill();
         angular.setSkillName("Angular");
@@ -209,9 +237,9 @@ public class DataSeeder implements CommandLineRunner {
         angular.setProficiencyLevel(80);
         angular.setYearsExperience(3);
         angular.setDescription("Frontend framework for building SPAs");
-        angular.setDisplayOrder(5);
+        angular.setDisplayOrder(7);
         angular.setIsFeatured(true);
-        angular.setProfile(profile);
+        angular.setProfileId(profile.getId());
         
         // Databases
         Skill oracle = new Skill();
@@ -220,9 +248,9 @@ public class DataSeeder implements CommandLineRunner {
         oracle.setProficiencyLevel(90);
         oracle.setYearsExperience(4);
         oracle.setDescription("Enterprise database management");
-        oracle.setDisplayOrder(6);
+        oracle.setDisplayOrder(8);
         oracle.setIsFeatured(true);
-        oracle.setProfile(profile);
+        oracle.setProfileId(profile.getId());
         
         Skill sqlServer = new Skill();
         sqlServer.setSkillName("SQL Server");
@@ -230,11 +258,96 @@ public class DataSeeder implements CommandLineRunner {
         sqlServer.setProficiencyLevel(90);
         sqlServer.setYearsExperience(4);
         sqlServer.setDescription("Microsoft database platform");
-        sqlServer.setDisplayOrder(7);
+        sqlServer.setDisplayOrder(9);
         sqlServer.setIsFeatured(true);
-        sqlServer.setProfile(profile);
+        sqlServer.setProfileId(profile.getId());
         
-        skillRepository.saveAll(List.of(java, javascript, php, springBoot, angular, oracle, sqlServer));
+        // Version Control & DevOps
+        Skill git = new Skill();
+        git.setSkillName("Git");
+        git.setSkillCategory("Version Control & DevOps");
+        git.setProficiencyLevel(90);
+        git.setYearsExperience(5);
+        git.setDescription("Distributed version control system");
+        git.setDisplayOrder(10);
+        git.setIsFeatured(true);
+        git.setProfileId(profile.getId());
+        
+        Skill bitbucket = new Skill();
+        bitbucket.setSkillName("BitBucket");
+        bitbucket.setSkillCategory("Version Control & DevOps");
+        bitbucket.setProficiencyLevel(90);
+        bitbucket.setYearsExperience(4);
+        bitbucket.setDescription("Git repository management and CI/CD");
+        bitbucket.setDisplayOrder(11);
+        bitbucket.setIsFeatured(true);
+        bitbucket.setProfileId(profile.getId());
+        
+        Skill jenkins = new Skill();
+        jenkins.setSkillName("Jenkins");
+        jenkins.setSkillCategory("Version Control & DevOps");
+        jenkins.setProficiencyLevel(80);
+        jenkins.setYearsExperience(3);
+        jenkins.setDescription("Continuous integration and deployment");
+        jenkins.setDisplayOrder(12);
+        jenkins.setIsFeatured(true);
+        jenkins.setProfileId(profile.getId());
+        
+        // Operating Systems
+        Skill windows = new Skill();
+        windows.setSkillName("Windows");
+        windows.setSkillCategory("Operating Systems");
+        windows.setProficiencyLevel(90);
+        windows.setYearsExperience(10);
+        windows.setDescription("Windows server and desktop administration");
+        windows.setDisplayOrder(13);
+        windows.setIsFeatured(true);
+        windows.setProfileId(profile.getId());
+        
+        Skill linux = new Skill();
+        linux.setSkillName("Linux");
+        linux.setSkillCategory("Operating Systems");
+        linux.setProficiencyLevel(85);
+        linux.setYearsExperience(4);
+        linux.setDescription("Linux system administration and deployment");
+        linux.setDisplayOrder(14);
+        linux.setIsFeatured(true);
+        linux.setProfileId(profile.getId());
+        
+        // Data Integration & Analytics
+        Skill ssis = new Skill();
+        ssis.setSkillName("SSIS");
+        ssis.setSkillCategory("Data Integration & Analytics");
+        ssis.setProficiencyLevel(90);
+        ssis.setYearsExperience(3);
+        ssis.setDescription("SQL Server Integration Services for ETL processes");
+        ssis.setDisplayOrder(15);
+        ssis.setIsFeatured(true);
+        ssis.setProfileId(profile.getId());
+        
+        Skill dataAnalytics = new Skill();
+        dataAnalytics.setSkillName("Database & Analytics");
+        dataAnalytics.setSkillCategory("Data Integration & Analytics");
+        dataAnalytics.setProficiencyLevel(80);
+        dataAnalytics.setYearsExperience(4);
+        dataAnalytics.setDescription("Database design and data analytics");
+        dataAnalytics.setDisplayOrder(16);
+        dataAnalytics.setIsFeatured(true);
+        dataAnalytics.setProfileId(profile.getId());
+        
+        // Productivity Tools
+        Skill msOffice = new Skill();
+        msOffice.setSkillName("Microsoft Office");
+        msOffice.setSkillCategory("Productivity Tools");
+        msOffice.setProficiencyLevel(85);
+        msOffice.setYearsExperience(10);
+        msOffice.setDescription("Advanced proficiency in Office suite");
+        msOffice.setDisplayOrder(17);
+        msOffice.setIsFeatured(true);
+        msOffice.setProfileId(profile.getId());
+        
+        skillRepository.saveAll(List.of(java, javascript, php, html, css, springBoot, angular, 
+                oracle, sqlServer, git, bitbucket, jenkins, windows, linux, ssis, dataAnalytics, msOffice));
     }
     
     private void createAchievements(Profile profile) {
@@ -247,7 +360,7 @@ public class DataSeeder implements CommandLineRunner {
         ach1.setAchievementType(Achievement.AchievementType.LANGUAGE_PROFICIENCY);
         ach1.setDisplayOrder(1);
         ach1.setIsFeatured(true);
-        ach1.setProfile(profile);
+        ach1.setProfileId(profile.getId());
         
         Achievement ach2 = new Achievement();
         ach2.setTitle("Presenter Certification for ICTGov 2023");
@@ -258,20 +371,208 @@ public class DataSeeder implements CommandLineRunner {
         ach2.setAchievementType(Achievement.AchievementType.PRESENTATION);
         ach2.setDisplayOrder(2);
         ach2.setIsFeatured(true);
-        ach2.setProfile(profile);
+        ach2.setProfileId(profile.getId());
         
         Achievement ach3 = new Achievement();
-        ach3.setTitle("Bootcamp Java Developer");
-        ach3.setIssuingOrganization("Ahlimata Persada");
-        ach3.setIssueDate(LocalDate.of(2019, 1, 1));
-        ach3.setCredentialId("AHLIMATA-JAVA-2019");
-        ach3.setDescription("Completed intensive Java development bootcamp");
-        ach3.setAchievementType(Achievement.AchievementType.COURSE_COMPLETION);
+        ach3.setTitle("Presenter Certification for ICTISEE 2023");
+        ach3.setIssuingOrganization("ICTISEE Conference");
+        ach3.setIssueDate(LocalDate.of(2023, 1, 1));
+        ach3.setCredentialId("ICTISEE-2023-PRESENTER");
+        ach3.setDescription("Certified presenter at ICTISEE 2023 conference");
+        ach3.setAchievementType(Achievement.AchievementType.PRESENTATION);
         ach3.setDisplayOrder(3);
         ach3.setIsFeatured(true);
-        ach3.setProfile(profile);
+        ach3.setProfileId(profile.getId());
         
-        achievementRepository.saveAll(List.of(ach1, ach2, ach3));
+        Achievement ach4 = new Achievement();
+        ach4.setTitle("Auditor Certification for ICAMIMIA 2023");
+        ach4.setIssuingOrganization("ICAMIMIA Conference");
+        ach4.setIssueDate(LocalDate.of(2023, 1, 1));
+        ach4.setCredentialId("ICAMIMIA-2023-AUDITOR");
+        ach4.setDescription("Certified auditor at ICAMIMIA 2023 conference");
+        ach4.setAchievementType(Achievement.AchievementType.CERTIFICATION);
+        ach4.setDisplayOrder(4);
+        ach4.setIsFeatured(true);
+        ach4.setProfileId(profile.getId());
+        
+        Achievement ach5 = new Achievement();
+        ach5.setTitle("English Toefl Course at LIA");
+        ach5.setIssuingOrganization("LIA (Lembaga Indonesia Amerika)");
+        ach5.setIssueDate(LocalDate.of(2016, 1, 1));
+        ach5.setCredentialId("LIA-TOEFL-2016");
+        ach5.setDescription("Completed TOEFL preparation course at LIA");
+        ach5.setAchievementType(Achievement.AchievementType.COURSE_COMPLETION);
+        ach5.setDisplayOrder(5);
+        ach5.setIsFeatured(true);
+        ach5.setProfileId(profile.getId());
+        
+        Achievement ach6 = new Achievement();
+        ach6.setTitle("English Language Course at LIA");
+        ach6.setIssuingOrganization("LIA (Lembaga Indonesia Amerika)");
+        ach6.setIssueDate(LocalDate.of(2017, 1, 1));
+        ach6.setCredentialId("LIA-ENGLISH-2017");
+        ach6.setDescription("Completed English language course at LIA");
+        ach6.setAchievementType(Achievement.AchievementType.COURSE_COMPLETION);
+        ach6.setDisplayOrder(6);
+        ach6.setIsFeatured(true);
+        ach6.setProfileId(profile.getId());
+        
+        Achievement ach7 = new Achievement();
+        ach7.setTitle("Bootcamp Java Developer");
+        ach7.setIssuingOrganization("Ahlimata Persada");
+        ach7.setIssueDate(LocalDate.of(2019, 1, 1));
+        ach7.setCredentialId("AHLIMATA-JAVA-2019");
+        ach7.setDescription("Completed intensive Java development bootcamp");
+        ach7.setAchievementType(Achievement.AchievementType.COURSE_COMPLETION);
+        ach7.setDisplayOrder(7);
+        ach7.setIsFeatured(true);
+        ach7.setProfileId(profile.getId());
+        
+        achievementRepository.saveAll(List.of(ach1, ach2, ach3, ach4, ach5, ach6, ach7));
+    }
+    
+    private void createProjects(Profile profile) {
+        // Project 1: Bebus - Bus Booking System (Backend)
+        Project bebus = new Project();
+        bebus.setTitle("PesanBus - Bus Booking System (Backend)");
+        bebus.setDescription("Backend API untuk sistem pemesanan tiket bus online dengan fitur manajemen rute, jadwal, pembayaran, dan notifikasi real-time. Dibangun dengan arsitektur microservices yang scalable.");
+        bebus.setShortDescription("Backend API untuk sistem pemesanan tiket bus online");
+        bebus.setStartDate(LocalDate.of(2025, 1, 3));
+        bebus.setEndDate(LocalDate.of(2025, 1, 3));
+        bebus.setStatus(Project.ProjectStatus.FINISHED);
+        bebus.setProjectUrl("https://pesanbus.my.id");
+        bebus.setGithubUrl("https://github.com/MuhammadDarmawanFadilah/bebus");
+        bebus.setClientName("Madio Prasetyo");
+        bebus.setTeamSize(2);
+        bebus.setMyRole("Backend Developer");
+        bebus.setCompletionPercentage(100);
+        bebus.setIsFeatured(true);
+        bebus.setDisplayOrder(1);
+        bebus.setTechnologies(List.of("PHP", "Laravel", "MySQL", "REST API", "JWT", "Composer"));
+        bebus.setFeatures(List.of("REST API", "Route management", "Payment integration", "Real-time notifications", "Scalable architecture", "Database optimization"));
+        bebus.setProfile(profile);
+        
+        // Project 2: Febus - Frontend for Bus System
+        Project febus = new Project();
+        febus.setTitle("PesanBus - Bus Booking System (Frontend)");
+        febus.setDescription("Frontend aplikasi pemesanan tiket bus dengan interface yang user-friendly. Fitur pencarian rute, pemilihan kursi, pembayaran online, dan tracking perjalanan real-time.");
+        febus.setShortDescription("Frontend aplikasi pemesanan tiket bus dengan UI modern");
+        febus.setStartDate(LocalDate.of(2025, 1, 3));
+        febus.setEndDate(LocalDate.of(2025, 1, 3));
+        febus.setStatus(Project.ProjectStatus.FINISHED);
+        febus.setProjectUrl("https://pesanbus.my.id");
+        febus.setGithubUrl("https://github.com/MuhammadDarmawanFadilah/febus");
+        febus.setClientName("Madio Prasetyo");
+        febus.setTeamSize(2);
+        febus.setMyRole("Frontend Developer");
+        febus.setCompletionPercentage(100);
+        febus.setIsFeatured(true);
+        febus.setDisplayOrder(2);
+        febus.setTechnologies(List.of("Next.js", "TypeScript", "Tailwind CSS", "React", "PWA", "Axios"));
+        febus.setFeatures(List.of("Responsive design", "Real-time updates", "Interactive seat map", "Payment integration", "User dashboard", "Mobile optimization"));
+        febus.setProfile(profile);
+        
+        // Project 3: Alumni System
+        Project alumni = new Project();
+        alumni.setTitle("IKAFK Alumni Management System");
+        alumni.setDescription("Sistem manajemen alumni yang komprehensif untuk mengelola data alumni, event, networking, dan komunikasi. Dilengkapi dengan fitur pencarian alumni, direktori, dan sistem notifikasi.");
+        alumni.setShortDescription("Sistem manajemen alumni dengan fitur networking");
+        alumni.setStartDate(LocalDate.of(2024, 6, 12));
+        alumni.setEndDate(LocalDate.of(2024, 7, 1));
+        alumni.setStatus(Project.ProjectStatus.FINISHED);
+        alumni.setProjectUrl("https://ikafk.my.id");
+        alumni.setGithubUrl("https://github.com/MuhammadDarmawanFadilah/alumni");
+        alumni.setClientName("Dr. Tika");
+        alumni.setTeamSize(3);
+        alumni.setMyRole("Full Stack Developer");
+        alumni.setCompletionPercentage(100);
+        alumni.setIsFeatured(true);
+        alumni.setDisplayOrder(3);
+        alumni.setTechnologies(List.of("Laravel", "MySQL", "Bootstrap", "jQuery", "PHP", "Apache"));
+        alumni.setFeatures(List.of("Alumni directory", "Event management", "News system", "User authentication", "Admin dashboard", "Email notifications"));
+        alumni.setProfile(profile);
+        
+        // Project 4: TB MDR Android App
+        Project tbMdr = new Project();
+        tbMdr.setTitle("Android TB MDR");
+        tbMdr.setDescription("REST API untuk aplikasi mobile monitoring dan pelaporan Tuberkulosis Multi-Drug Resistant. Sistem tracking pasien, jadwal pengobatan, dan laporan medis digital.");
+        tbMdr.setShortDescription("REST API untuk aplikasi mobile TB MDR monitoring");
+        tbMdr.setStartDate(LocalDate.of(2023, 9, 1));
+        tbMdr.setEndDate(LocalDate.of(2024, 2, 28));
+        tbMdr.setStatus(Project.ProjectStatus.FINISHED);
+        tbMdr.setProjectUrl(null);
+        tbMdr.setGithubUrl(null);
+        tbMdr.setClientName("Peppy Octaviani");
+        tbMdr.setTeamSize(4);
+        tbMdr.setMyRole("Backend API Developer");
+        tbMdr.setCompletionPercentage(100);
+        tbMdr.setIsFeatured(false);
+        tbMdr.setDisplayOrder(4);
+        tbMdr.setTechnologies(List.of("Node.js", "Express", "MongoDB", "JWT", "Multer", "Firebase"));
+        tbMdr.setFeatures(List.of("Patient management", "Medication tracking", "Health monitoring", "Appointment scheduling", "Data synchronization", "Offline support"));
+        tbMdr.setProfile(profile);
+        
+        // Project 5: Personal Portfolio Website
+        Project portfolio = new Project();
+        portfolio.setTitle("Personal Portfolio Website");
+        portfolio.setDescription("Website portfolio personal yang modern dan responsif untuk showcase projects, skills, dan pengalaman profesional. Dibangun dengan teknologi terkini dan optimized untuk performance.");
+        portfolio.setShortDescription("Website portfolio personal dengan teknologi modern");
+        portfolio.setStartDate(LocalDate.of(2024, 7, 13));
+        portfolio.setEndDate(LocalDate.of(2024, 7, 13));
+        portfolio.setStatus(Project.ProjectStatus.FINISHED);
+        portfolio.setProjectUrl("http://mdarmawanf.my.id");
+        portfolio.setGithubUrl("https://github.com/MuhammadDarmawanFadilah/webafan-portfolio");
+        portfolio.setClientName("Personal Project");
+        portfolio.setTeamSize(1);
+        portfolio.setMyRole("Full Stack Developer");
+        portfolio.setCompletionPercentage(95);
+        portfolio.setIsFeatured(true);
+        portfolio.setDisplayOrder(5);
+        portfolio.setTechnologies(List.of("React", "TypeScript", "Tailwind CSS", "Spring Boot", "MySQL", "JWT"));
+        portfolio.setFeatures(List.of("Responsive design", "Admin panel", "Contact form", "Project showcase", "Skills management", "Experience timeline"));
+        portfolio.setProfile(profile);
+        
+        // Project 6: Attendance Management System
+        Project absensi = new Project();
+        absensi.setTitle("Bawaslu Attendance System");
+        absensi.setDescription("Sistem absensi digital untuk Bawaslu Lampung dengan fitur face recognition, GPS tracking, dan laporan kehadiran real-time. Meningkatkan efisiensi dan akurasi pencatatan kehadiran pegawai.");
+        absensi.setShortDescription("Sistem absensi digital dengan face recognition");
+        absensi.setStartDate(LocalDate.of(2024, 6, 30));
+        absensi.setEndDate(LocalDate.of(2024, 7, 6));
+        absensi.setStatus(Project.ProjectStatus.FINISHED);
+        absensi.setProjectUrl("http://absenkantor.my.id");
+        absensi.setGithubUrl("https://github.com/MuhammadDarmawanFadilah/absensi");
+        absensi.setClientName("Bawaslu Lampung");
+        absensi.setTeamSize(2);
+        absensi.setMyRole("Full Stack Developer");
+        absensi.setCompletionPercentage(100);
+        absensi.setIsFeatured(true);
+        absensi.setDisplayOrder(6);
+        absensi.setTechnologies(List.of("Laravel", "MySQL", "JavaScript", "Face-API.js", "GPS API", "Bootstrap"));
+        absensi.setFeatures(List.of("Face recognition", "GPS tracking", "Real-time reports", "Employee management", "Attendance analytics", "Mobile responsive"));
+        absensi.setProfile(profile);
+        
+        // Project 7: Election System
+        Project pemilihan = new Project();
+        pemilihan.setTitle("Election Management System");
+        pemilihan.setDescription("Sistem manajemen pemilihan untuk Bawaslu Yogyakarta dengan fitur registrasi kandidat, voting online, real-time counting, dan reporting. Sistem aman dengan enkripsi end-to-end.");
+        pemilihan.setShortDescription("Sistem manajemen pemilihan dengan voting online yang aman");
+        pemilihan.setStartDate(LocalDate.of(2022, 10, 1));
+        pemilihan.setEndDate(LocalDate.of(2023, 3, 30));
+        pemilihan.setStatus(Project.ProjectStatus.FINISHED);
+        pemilihan.setProjectUrl("#");
+        pemilihan.setGithubUrl("https://github.com/MuhammadDarmawanFadilah/pemilihan");
+        pemilihan.setClientName("Bawaslu Yogyakarta");
+        pemilihan.setTeamSize(3);
+        pemilihan.setMyRole("Full Stack Developer & Security Specialist");
+        pemilihan.setCompletionPercentage(100);
+        pemilihan.setIsFeatured(false);
+        pemilihan.setDisplayOrder(7);
+        pemilihan.setTechnologies(List.of("PHP", "MySQL", "JavaScript", "Bootstrap", "Encryption", "Chart.js"));
+        pemilihan.setFeatures(List.of("Secure voting", "Candidate management", "Real-time results", "Voter verification", "Election monitoring", "Audit trail"));
+        pemilihan.setProfile(profile);
+        
+        projectRepository.saveAll(List.of(bebus, febus, alumni, tbMdr, portfolio, absensi, pemilihan));
     }
     
     private void createAdminUser() {
@@ -282,7 +583,6 @@ public class DataSeeder implements CommandLineRunner {
         adminUser.setIsActive(true);
         
         User savedUser = userRepository.save(adminUser);
-        System.out.println("✅ Admin user created - Username: afan, Password: P@ssw0rd");
-        System.out.println("✅ Admin user details - ID: " + savedUser.getId() + ", IsActive: " + savedUser.getIsActive());
+        System.out.println("Default admin user initialized successfully - Username: " + savedUser.getUsername());
     }
 }

@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Plus, Edit, Trash2, Save, X, Briefcase } from 'lucide-react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Plus, Edit, Trash2, Briefcase } from 'lucide-react';
+import { apiEndpoints } from '../../config/config';
 
 interface Experience {
   id?: number;
@@ -30,25 +27,11 @@ interface ExperienceManagerProps {
 
 const ExperienceManager: React.FC<ExperienceManagerProps> = ({ onUpdate }) => {
   const [experiences, setExperiences] = useState<Experience[]>([]);
-  const [editingExperience, setEditingExperience] = useState<Experience | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
-  const emptyExperience: Experience = {
-    jobTitle: '',
-    companyName: '',
-    companyLocation: '',
-    startDate: '',
-    endDate: '',
-    isCurrent: false,
-    description: '',
-    responsibilities: '',
-    achievements: '',
-    technologies: '',
-    displayOrder: 0
-  };
+
 
   useEffect(() => {
     fetchExperiences();
@@ -56,13 +39,7 @@ const ExperienceManager: React.FC<ExperienceManagerProps> = ({ onUpdate }) => {
 
   const fetchExperiences = async () => {
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:8080/api/experiences', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await fetch(apiEndpoints.experiences.base);
       
       if (response.ok) {
         const data = await response.json();
@@ -73,46 +50,12 @@ const ExperienceManager: React.FC<ExperienceManagerProps> = ({ onUpdate }) => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingExperience) return;
+  const handleCreateExperience = () => {
+    navigate('/admin/experiences/new');
+  };
 
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      const token = localStorage.getItem('adminToken');
-      const url = editingExperience.id 
-        ? `http://localhost:8080/api/experiences/${editingExperience.id}`
-        : 'http://localhost:8080/api/experiences';
-      
-      const method = editingExperience.id ? 'PUT' : 'POST';
-      
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editingExperience)
-      });
-
-      if (response.ok) {
-        setSuccess(editingExperience.id ? 'Experience updated successfully!' : 'Experience created successfully!');
-        setIsDialogOpen(false);
-        setEditingExperience(null);
-        fetchExperiences();
-        onUpdate();
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Operation failed');
-      }
-    } catch (error) {
-      setError('Network error. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+  const handleEditExperience = (id: number) => {
+    navigate(`/admin/experiences/edit/${id}`);
   };
 
   const handleDelete = async (id: number) => {
@@ -120,7 +63,7 @@ const ExperienceManager: React.FC<ExperienceManagerProps> = ({ onUpdate }) => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:8080/api/experiences/${id}`, {
+      const response = await fetch(`${apiEndpoints.experiences.base}/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -137,18 +80,9 @@ const ExperienceManager: React.FC<ExperienceManagerProps> = ({ onUpdate }) => {
     }
   };
 
-  const openDialog = (experience?: Experience) => {
-    setEditingExperience(experience ? { ...experience } : { ...emptyExperience });
-    setIsDialogOpen(true);
-    setError('');
-    setSuccess('');
-  };
 
-  const handleInputChange = (field: keyof Experience, value: string | boolean | number) => {
-    if (editingExperience) {
-      setEditingExperience({ ...editingExperience, [field]: value });
-    }
-  };
+
+
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
@@ -165,166 +99,10 @@ const ExperienceManager: React.FC<ExperienceManagerProps> = ({ onUpdate }) => {
           <h2 className="text-2xl font-bold">Experience Management</h2>
           <p className="text-gray-600">Manage work experience and career history</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => openDialog()} className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Add Experience
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{editingExperience?.id ? 'Edit Experience' : 'Add New Experience'}</DialogTitle>
-              <DialogDescription>
-                {editingExperience?.id ? 'Update experience information' : 'Create a new work experience entry'}
-              </DialogDescription>
-            </DialogHeader>
-            
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="jobTitle">Job Title</Label>
-                  <Input
-                    id="jobTitle"
-                    value={editingExperience?.jobTitle || ''}
-                    onChange={(e) => handleInputChange('jobTitle', e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="companyName">Company Name</Label>
-                  <Input
-                    id="companyName"
-                    value={editingExperience?.companyName || ''}
-                    onChange={(e) => handleInputChange('companyName', e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="companyLocation">Company Location</Label>
-                <Input
-                  id="companyLocation"
-                  value={editingExperience?.companyLocation || ''}
-                  onChange={(e) => handleInputChange('companyLocation', e.target.value)}
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="startDate">Start Date</Label>
-                  <Input
-                    id="startDate"
-                    type="date"
-                    value={editingExperience?.startDate || ''}
-                    onChange={(e) => handleInputChange('startDate', e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="endDate">End Date</Label>
-                  <Input
-                    id="endDate"
-                    type="date"
-                    value={editingExperience?.endDate || ''}
-                    onChange={(e) => handleInputChange('endDate', e.target.value)}
-                    disabled={editingExperience?.isCurrent}
-                  />
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="isCurrent"
-                  checked={editingExperience?.isCurrent || false}
-                  onCheckedChange={(checked) => {
-                    handleInputChange('isCurrent', checked as boolean);
-                    if (checked) {
-                      handleInputChange('endDate', '');
-                    }
-                  }}
-                />
-                <Label htmlFor="isCurrent">Currently working here</Label>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={editingExperience?.description || ''}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
-                  rows={3}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="responsibilities">Responsibilities</Label>
-                <Textarea
-                  id="responsibilities"
-                  value={editingExperience?.responsibilities || ''}
-                  onChange={(e) => handleInputChange('responsibilities', e.target.value)}
-                  rows={3}
-                  placeholder="List key responsibilities (one per line)"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="achievements">Achievements</Label>
-                <Textarea
-                  id="achievements"
-                  value={editingExperience?.achievements || ''}
-                  onChange={(e) => handleInputChange('achievements', e.target.value)}
-                  rows={3}
-                  placeholder="List key achievements (one per line)"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="technologies">Technologies Used</Label>
-                <Input
-                  id="technologies"
-                  value={editingExperience?.technologies || ''}
-                  onChange={(e) => handleInputChange('technologies', e.target.value)}
-                  placeholder="e.g., React, Node.js, Python, AWS"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="displayOrder">Display Order</Label>
-                <Input
-                  id="displayOrder"
-                  type="number"
-                  value={editingExperience?.displayOrder || 0}
-                  onChange={(e) => handleInputChange('displayOrder', parseInt(e.target.value) || 0)}
-                />
-              </div>
-              
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              
-              {success && (
-                <Alert>
-                  <AlertDescription>{success}</AlertDescription>
-                </Alert>
-              )}
-              
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={loading}>
-                  <Save className="h-4 w-4 mr-2" />
-                  {loading ? 'Saving...' : 'Save'}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={handleCreateExperience} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          Add Experience
+        </Button>
       </div>
 
       {/* Experiences List */}
@@ -361,7 +139,7 @@ const ExperienceManager: React.FC<ExperienceManagerProps> = ({ onUpdate }) => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => openDialog(experience)}
+                    onClick={() => experience.id && handleEditExperience(experience.id)}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>

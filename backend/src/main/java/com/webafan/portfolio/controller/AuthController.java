@@ -3,7 +3,6 @@ package com.webafan.portfolio.controller;
 import com.webafan.portfolio.entity.User;
 import com.webafan.portfolio.service.AuthService;
 import com.webafan.portfolio.repository.UserRepository;
-import com.webafan.portfolio.dto.LoginRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "${spring.web.cors.allowed-origins}")
+
 public class AuthController {
     
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);

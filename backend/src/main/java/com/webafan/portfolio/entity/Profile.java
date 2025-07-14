@@ -42,13 +42,13 @@ public class Profile {
     @Column(name = "birth_place")
     private String birthPlace;
     
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "address", columnDefinition = "TEXT")
     private String address;
     
     @Column(name = "current_address", columnDefinition = "TEXT")
     private String currentAddress;
     
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "about", columnDefinition = "TEXT")
     private String about;
     
     @Column(name = "profile_image_url")
@@ -65,6 +65,36 @@ public class Profile {
     
     @Column(name = "website_url")
     private String websiteUrl;
+    
+    @Column(name = "roles")
+    private String roles;
+    
+    @Column(name = "projects_count")
+    private Integer projectsCount;
+    
+    @Column(name = "degrees_count")
+    private Integer degreesCount;
+    
+    @Column(name = "certificates_count")
+    private Integer certificatesCount;
+    
+    @Column(name = "top_skills")
+    private String topSkills;
+    
+    @Column(name = "personal_story", columnDefinition = "TEXT")
+    private String personalStory;
+    
+    @Column(name = "values", columnDefinition = "TEXT")
+    private String values;
+    
+    @Column(name = "expertise_areas", columnDefinition = "TEXT")
+    private String expertiseAreas;
+    
+    @Column(name = "technical_skills", columnDefinition = "TEXT")
+    private String technicalSkills;
+    
+    @Column(name = "cv_file_url")
+    private String cvFileUrl;
     
     // Getters and Setters
     public Long getId() {
@@ -185,5 +215,85 @@ public class Profile {
     
     public void setWebsiteUrl(String websiteUrl) {
         this.websiteUrl = websiteUrl;
+    }
+    
+    public String getRoles() {
+        return roles;
+    }
+    
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+    
+    public Integer getProjectsCount() {
+        return projectsCount;
+    }
+    
+    public void setProjectsCount(Integer projectsCount) {
+        this.projectsCount = projectsCount;
+    }
+    
+    public Integer getDegreesCount() {
+        return degreesCount;
+    }
+    
+    public void setDegreesCount(Integer degreesCount) {
+        this.degreesCount = degreesCount;
+    }
+    
+    public Integer getCertificatesCount() {
+        return certificatesCount;
+    }
+    
+    public void setCertificatesCount(Integer certificatesCount) {
+        this.certificatesCount = certificatesCount;
+    }
+    
+    public String getTopSkills() {
+        return topSkills;
+    }
+    
+    public void setTopSkills(String topSkills) {
+        this.topSkills = topSkills;
+    }
+    
+    public String getPersonalStory() {
+        return personalStory;
+    }
+    
+    public void setPersonalStory(String personalStory) {
+        this.personalStory = personalStory;
+    }
+    
+    public String getValues() {
+        return values;
+    }
+    
+    public void setValues(String values) {
+        this.values = values;
+    }
+    
+    public String getExpertiseAreas() {
+        return expertiseAreas;
+    }
+    
+    public void setExpertiseAreas(String expertiseAreas) {
+        this.expertiseAreas = expertiseAreas;
+    }
+    
+    public String getTechnicalSkills() {
+        return technicalSkills;
+    }
+    
+    public void setTechnicalSkills(String technicalSkills) {
+        this.technicalSkills = technicalSkills;
+    }
+    
+    public String getCvFileUrl() {
+        return cvFileUrl;
+    }
+    
+    public void setCvFileUrl(String cvFileUrl) {
+        this.cvFileUrl = cvFileUrl;
     }
 }

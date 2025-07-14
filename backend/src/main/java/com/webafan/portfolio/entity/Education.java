@@ -49,15 +49,19 @@ public class Education {
     @Column(name = "max_gpa", precision = 3, scale = 2)
     private BigDecimal maxGpa;
     
-    @Column(columnDefinition = "TEXT")
+    @Column
     private String description;
     
     @Column(name = "display_order")
     private Integer displayOrder;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
-    private Profile profile;
+    // Temporarily removed to avoid constraint issues
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "profile_id")
+    // private Profile profile;
+    
+    @Column(name = "profile_id")
+    private Long profileId;
     
     // Getters and Setters
     public Long getId() {
@@ -156,11 +160,11 @@ public class Education {
         this.displayOrder = displayOrder;
     }
     
-    public Profile getProfile() {
-        return profile;
+    public Long getProfileId() {
+        return profileId;
     }
     
-    public void setProfile(Profile profile) {
-        this.profile = profile;
+    public void setProfileId(Long profileId) {
+        this.profileId = profileId;
     }
 }

@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Eye, EyeOff, Lock, User, Shield, ArrowRight } from 'lucide-react';
+import { apiEndpoints } from '../../config/config';
 
 interface LoginProps {
   onLogin: (token: string) => void;
@@ -23,7 +24,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
+      const response = await fetch(apiEndpoints.auth.login, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -167,7 +168,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         </div>
       </div>
       
-      <style jsx>{`
+      <style>{`
         @keyframes blob {
           0% {
             transform: translate(0px, 0px) scale(1);

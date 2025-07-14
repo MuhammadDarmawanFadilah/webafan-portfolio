@@ -38,12 +38,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String method = request.getMethod();
         logger.info("=== JWT FILTER: Processing {} {}", method, requestURI);
         
-        // Skip JWT processing for auth endpoints
-        if (requestURI.startsWith("/api/auth/")) {
-            logger.info("=== JWT FILTER: Skipping JWT processing for auth endpoint: {}", requestURI);
+        // Skip JWT processing only for authentication endpoints and contact form
+        if (requestURI.startsWith("/api/auth/") || requestURI.equals("/api/contacts/submit")) {
+            logger.info("=== JWT FILTER: Skipping JWT processing for auth endpoint: {} {}", method, requestURI);
             filterChain.doFilter(request, response);
             return;
         }
+        
+        // Skip JWT processing for public GET requests (portfolio display)
+        if (method.equals("GET") && (
+                requestURI.startsWith("/api/profiles/public") ||
+                requestURI.startsWith("/api/projects/public") ||
+                requestURI.startsWith("/api/experiences/public") ||
+                requestURI.startsWith("/api/skills/public") ||
+                requestURI.startsWith("/api/educations/public") ||
+                requestURI.startsWith("/api/achievements/public"))) {
+            logger.info("=== JWT FILTER: Skipping JWT processing for public GET endpoint: {} {}", method, requestURI);
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
+        logger.info("=== JWT FILTER: Processing authenticated endpoint: {} {}", method, requestURI);
         
         final String authorizationHeader = request.getHeader("Authorization");
         logger.info("=== JWT FILTER: Authorization header: {}", authorizationHeader != null ? "Present" : "Not present");
@@ -65,6 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                logger.info("=== JWT FILTER: User loaded - Username: {}, Authorities: {}", username, userDetails.getAuthorities());
                 
                 if (jwtUtil.validateToken(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = 
@@ -73,9 +89,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    logger.info("=== JWT FILTER: Authentication set successfully for user: {}", username);
+                } else {
+                    logger.error("=== JWT FILTER: Token validation failed for user: {}", username);
                 }
             } catch (Exception e) {
-                logger.error("Error validating JWT token: " + e.getMessage());
+                logger.error("=== JWT FILTER: Error validating JWT token: " + e.getMessage());
             }
         }
         

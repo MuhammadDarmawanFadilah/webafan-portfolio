@@ -1,7 +1,6 @@
 package com.webafan.portfolio.service;
 
 import com.webafan.portfolio.entity.Skill;
-import com.webafan.portfolio.entity.Profile;
 import com.webafan.portfolio.repository.SkillRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +24,6 @@ public class SkillService {
     
     public Optional<Skill> getSkillById(Long id) {
         return skillRepository.findById(id);
-    }
-    
-    public List<Skill> getSkillsByProfile(Profile profile) {
-        return skillRepository.findByProfileOrderByDisplayOrderAsc(profile);
     }
     
     public List<Skill> getSkillsByProfileId(Long profileId) {

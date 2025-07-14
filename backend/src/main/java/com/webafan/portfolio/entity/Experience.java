@@ -38,21 +38,25 @@ public class Experience {
     @Column(name = "is_current")
     private Boolean isCurrent = false;
     
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description")
     private String description;
     
     @Column(name = "technologies_used")
     private String technologiesUsed;
     
-    @Column(name = "key_achievements", columnDefinition = "TEXT")
+    @Column(name = "key_achievements")
     private String keyAchievements;
     
     @Column(name = "display_order")
     private Integer displayOrder;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
-    private Profile profile;
+    // Temporarily removed to avoid constraint issues
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "profile_id")
+    // private Profile profile;
+    
+    @Column(name = "profile_id")
+    private Long profileId;
     
     // Getters and Setters
     public Long getId() {
@@ -143,11 +147,11 @@ public class Experience {
         this.displayOrder = displayOrder;
     }
     
-    public Profile getProfile() {
-        return profile;
+    public Long getProfileId() {
+        return profileId;
     }
     
-    public void setProfile(Profile profile) {
-        this.profile = profile;
+    public void setProfileId(Long profileId) {
+        this.profileId = profileId;
     }
 }

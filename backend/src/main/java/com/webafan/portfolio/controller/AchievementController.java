@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/achievements")
-@CrossOrigin(origins = "http://localhost:5174")
+
 public class AchievementController {
     
     private final AchievementService achievementService;
@@ -27,6 +27,12 @@ public class AchievementController {
     @GetMapping
     public ResponseEntity<List<Achievement>> getAllAchievements() {
         List<Achievement> achievements = achievementService.getAllAchievements();
+        return ResponseEntity.ok(achievements);
+    }
+    
+    @GetMapping("/featured")
+    public ResponseEntity<List<Achievement>> getFeaturedAchievements() {
+        List<Achievement> achievements = achievementService.getFeaturedAchievements();
         return ResponseEntity.ok(achievements);
     }
     

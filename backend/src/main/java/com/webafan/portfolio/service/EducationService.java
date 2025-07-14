@@ -1,7 +1,6 @@
 package com.webafan.portfolio.service;
 
 import com.webafan.portfolio.entity.Education;
-import com.webafan.portfolio.entity.Profile;
 import com.webafan.portfolio.repository.EducationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +45,7 @@ public class EducationService {
         education.setMaxGpa(educationDetails.getMaxGpa());
         education.setDescription(educationDetails.getDescription());
         education.setDisplayOrder(educationDetails.getDisplayOrder());
-        education.setProfile(educationDetails.getProfile());
+        education.setProfileId(educationDetails.getProfileId());
         
         return educationRepository.save(education);
     }
@@ -56,10 +55,6 @@ public class EducationService {
                 .orElseThrow(() -> new RuntimeException("Education not found with id: " + id));
         
         educationRepository.delete(education);
-    }
-    
-    public List<Education> getEducationsByProfile(Profile profile) {
-        return educationRepository.findByProfileOrderByDisplayOrderAsc(profile);
     }
     
     public List<Education> getEducationsByProfileId(Long profileId) {

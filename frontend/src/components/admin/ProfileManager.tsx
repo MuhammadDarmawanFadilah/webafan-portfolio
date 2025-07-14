@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Plus, Edit, Trash2, Save, X } from 'lucide-react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Plus, Edit, Trash2 } from 'lucide-react';
+import { config, apiEndpoints } from '../../config/config';
 
 interface Profile {
   id?: number;
@@ -14,12 +12,28 @@ interface Profile {
   title: string;
   email: string;
   phone: string;
-  location: string;
-  bio: string;
+  birthDate?: string;
+  birthPlace?: string;
+  address?: string;
+  currentAddress?: string;
+  about?: string;
   profileImageUrl: string;
+  yearsExperience?: number;
   linkedinUrl: string;
   githubUrl: string;
   websiteUrl: string;
+  roles?: string;
+  projectsCount?: number;
+  degreesCount?: number;
+  certificatesCount?: number;
+  topSkills?: string;
+  personalStory?: string;
+  values?: string;
+  expertiseAreas?: string;
+  technicalSkills?: string;
+  experiences?: string;
+  educations?: string;
+  certifications?: string;
 }
 
 interface ProfileManagerProps {
@@ -27,25 +41,10 @@ interface ProfileManagerProps {
 }
 
 const ProfileManager: React.FC<ProfileManagerProps> = ({ onUpdate }) => {
+  const navigate = useNavigate();
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
-  const emptyProfile: Profile = {
-    fullName: '',
-    title: '',
-    email: '',
-    phone: '',
-    location: '',
-    bio: '',
-    profileImageUrl: '',
-    linkedinUrl: '',
-    githubUrl: '',
-    websiteUrl: ''
-  };
 
   useEffect(() => {
     fetchProfiles();
@@ -54,7 +53,7 @@ const ProfileManager: React.FC<ProfileManagerProps> = ({ onUpdate }) => {
   const fetchProfiles = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:8080/api/profiles', {
+      const response = await fetch(apiEndpoints.profiles.base, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -63,53 +62,24 @@ const ProfileManager: React.FC<ProfileManagerProps> = ({ onUpdate }) => {
       
       if (response.ok) {
         const data = await response.json();
+        console.log('Fetched profiles data:', data);
+        // Backend returns array of profiles
         setProfiles(data);
+      } else {
+        setError('Failed to fetch profiles');
       }
     } catch (error) {
       console.error('Error fetching profiles:', error);
+      setError('Error fetching profiles');
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingProfile) return;
+  const handleCreateProfile = () => {
+    navigate('/admin/profiles/new');
+  };
 
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      const token = localStorage.getItem('adminToken');
-      const url = editingProfile.id 
-        ? `http://localhost:8080/api/profiles/${editingProfile.id}`
-        : 'http://localhost:8080/api/profiles';
-      
-      const method = editingProfile.id ? 'PUT' : 'POST';
-      
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editingProfile)
-      });
-
-      if (response.ok) {
-        setSuccess(editingProfile.id ? 'Profile updated successfully!' : 'Profile created successfully!');
-        setIsDialogOpen(false);
-        setEditingProfile(null);
-        fetchProfiles();
-        onUpdate();
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Operation failed');
-      }
-    } catch (error) {
-      setError('Network error. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+  const handleEditProfile = (profile: Profile) => {
+    navigate(`/admin/profiles/edit/${profile.id}`);
   };
 
   const handleDelete = async (id: number) => {
@@ -117,7 +87,7 @@ const ProfileManager: React.FC<ProfileManagerProps> = ({ onUpdate }) => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:8080/api/profiles/${id}`, {
+      const response = await fetch(`${apiEndpoints.profiles.base}/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -128,24 +98,18 @@ const ProfileManager: React.FC<ProfileManagerProps> = ({ onUpdate }) => {
         setSuccess('Profile deleted successfully!');
         fetchProfiles();
         onUpdate();
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError('Failed to delete profile');
+        setTimeout(() => setError(''), 3000);
       }
     } catch (error) {
       setError('Error deleting profile');
+      setTimeout(() => setError(''), 3000);
     }
   };
 
-  const openDialog = (profile?: Profile) => {
-    setEditingProfile(profile ? { ...profile } : { ...emptyProfile });
-    setIsDialogOpen(true);
-    setError('');
-    setSuccess('');
-  };
 
-  const handleInputChange = (field: keyof Profile, value: string) => {
-    if (editingProfile) {
-      setEditingProfile({ ...editingProfile, [field]: value });
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -154,146 +118,25 @@ const ProfileManager: React.FC<ProfileManagerProps> = ({ onUpdate }) => {
           <h2 className="text-2xl font-bold">Profile Management</h2>
           <p className="text-gray-600">Manage profile information and photo</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => openDialog()} className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Add Profile
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{editingProfile?.id ? 'Edit Profile' : 'Add New Profile'}</DialogTitle>
-              <DialogDescription>
-                {editingProfile?.id ? 'Update profile information' : 'Create a new profile'}
-              </DialogDescription>
-            </DialogHeader>
-            
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <Input
-                    id="fullName"
-                    value={editingProfile?.fullName || ''}
-                    onChange={(e) => handleInputChange('fullName', e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    value={editingProfile?.title || ''}
-                    onChange={(e) => handleInputChange('title', e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={editingProfile?.email || ''}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    value={editingProfile?.phone || ''}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
-                <Input
-                  id="location"
-                  value={editingProfile?.location || ''}
-                  onChange={(e) => handleInputChange('location', e.target.value)}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="bio">Bio</Label>
-                <Textarea
-                  id="bio"
-                  value={editingProfile?.bio || ''}
-                  onChange={(e) => handleInputChange('bio', e.target.value)}
-                  rows={4}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="profileImageUrl">Profile Image URL</Label>
-                <Input
-                  id="profileImageUrl"
-                  value={editingProfile?.profileImageUrl || ''}
-                  onChange={(e) => handleInputChange('profileImageUrl', e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
-              
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="linkedinUrl">LinkedIn URL</Label>
-                  <Input
-                    id="linkedinUrl"
-                    value={editingProfile?.linkedinUrl || ''}
-                    onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="githubUrl">GitHub URL</Label>
-                  <Input
-                    id="githubUrl"
-                    value={editingProfile?.githubUrl || ''}
-                    onChange={(e) => handleInputChange('githubUrl', e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="websiteUrl">Website URL</Label>
-                  <Input
-                    id="websiteUrl"
-                    value={editingProfile?.websiteUrl || ''}
-                    onChange={(e) => handleInputChange('websiteUrl', e.target.value)}
-                  />
-                </div>
-              </div>
-              
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              
-              {success && (
-                <Alert>
-                  <AlertDescription>{success}</AlertDescription>
-                </Alert>
-              )}
-              
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={loading}>
-                  <Save className="h-4 w-4 mr-2" />
-                  {loading ? 'Saving...' : 'Save'}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={handleCreateProfile} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          Add Profile
+        </Button>
+
       </div>
+
+      {/* Error and Success Messages */}
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      
+      {success && (
+        <Alert>
+          <AlertDescription>{success}</AlertDescription>
+        </Alert>
+      )}
 
       {/* Profiles List */}
       <div className="grid gap-4">
@@ -313,9 +156,12 @@ const ProfileManager: React.FC<ProfileManagerProps> = ({ onUpdate }) => {
                     <h3 className="text-lg font-semibold">{profile.fullName}</h3>
                     <p className="text-gray-600">{profile.title}</p>
                     <p className="text-sm text-gray-500">{profile.email}</p>
-                    <p className="text-sm text-gray-500">{profile.location}</p>
-                    {profile.bio && (
-                      <p className="text-sm mt-2 max-w-2xl">{profile.bio}</p>
+                    <p className="text-sm text-gray-500">{profile.currentAddress || profile.address}</p>
+                    {profile.about && (
+                      <p className="text-sm mt-2 max-w-2xl">{profile.about}</p>
+                    )}
+                    {profile.yearsExperience && (
+                      <p className="text-sm text-gray-500">Experience: {profile.yearsExperience} years</p>
                     )}
                   </div>
                 </div>
@@ -323,7 +169,7 @@ const ProfileManager: React.FC<ProfileManagerProps> = ({ onUpdate }) => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => openDialog(profile)}
+                    onClick={() => handleEditProfile(profile)}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>

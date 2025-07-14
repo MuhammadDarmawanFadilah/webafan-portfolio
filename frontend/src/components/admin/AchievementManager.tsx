@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Plus, Edit, Trash2, Save, X, Award, ExternalLink } from 'lucide-react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Plus, Edit, Trash2, Award, ExternalLink } from 'lucide-react';
+import { apiEndpoints } from '../../config/config';
 
 interface Achievement {
   id?: number;
@@ -30,38 +26,12 @@ interface AchievementManagerProps {
 }
 
 const AchievementManager: React.FC<AchievementManagerProps> = ({ onUpdate }) => {
+  const navigate = useNavigate();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [editingAchievement, setEditingAchievement] = useState<Achievement | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const emptyAchievement: Achievement = {
-    title: '',
-    issuingOrganization: '',
-    issueDate: '',
-    expiryDate: '',
-    credentialId: '',
-    credentialUrl: '',
-    description: '',
-    achievementType: '',
-    badgeImageUrl: '',
-    displayOrder: 0,
-    isFeatured: false
-  };
 
-  const achievementTypes = [
-    'Certification',
-    'Award',
-    'License',
-    'Course Completion',
-    'Competition',
-    'Recognition',
-    'Publication',
-    'Patent',
-    'Other'
-  ];
 
   useEffect(() => {
     fetchAchievements();
@@ -69,13 +39,7 @@ const AchievementManager: React.FC<AchievementManagerProps> = ({ onUpdate }) => 
 
   const fetchAchievements = async () => {
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:8080/api/achievements', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await fetch(apiEndpoints.achievements.base);
       
       if (response.ok) {
         const data = await response.json();
@@ -86,54 +50,14 @@ const AchievementManager: React.FC<AchievementManagerProps> = ({ onUpdate }) => 
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingAchievement) return;
 
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      const token = localStorage.getItem('adminToken');
-      const url = editingAchievement.id 
-        ? `http://localhost:8080/api/achievements/${editingAchievement.id}`
-        : 'http://localhost:8080/api/achievements';
-      
-      const method = editingAchievement.id ? 'PUT' : 'POST';
-      
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editingAchievement)
-      });
-
-      if (response.ok) {
-        setSuccess(editingAchievement.id ? 'Achievement updated successfully!' : 'Achievement created successfully!');
-        setIsDialogOpen(false);
-        setEditingAchievement(null);
-        fetchAchievements();
-        onUpdate();
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Operation failed');
-      }
-    } catch (error) {
-      setError('Network error. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this achievement?')) return;
 
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:8080/api/achievements/${id}`, {
+      const response = await fetch(`${apiEndpoints.achievements.base}/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -150,17 +74,12 @@ const AchievementManager: React.FC<AchievementManagerProps> = ({ onUpdate }) => 
     }
   };
 
-  const openDialog = (achievement?: Achievement) => {
-    setEditingAchievement(achievement ? { ...achievement } : { ...emptyAchievement });
-    setIsDialogOpen(true);
-    setError('');
-    setSuccess('');
+  const handleCreateAchievement = () => {
+    navigate('/admin/achievements/new');
   };
 
-  const handleInputChange = (field: keyof Achievement, value: string | boolean | number) => {
-    if (editingAchievement) {
-      setEditingAchievement({ ...editingAchievement, [field]: value });
-    }
+  const handleEditAchievement = (achievement: Achievement) => {
+    navigate(`/admin/achievements/edit/${achievement.id}`);
   };
 
   const formatDate = (dateString: string) => {
@@ -184,175 +103,10 @@ const AchievementManager: React.FC<AchievementManagerProps> = ({ onUpdate }) => 
           <h2 className="text-2xl font-bold">Achievement Management</h2>
           <p className="text-gray-600">Manage certifications, awards, and achievements</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => openDialog()} className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Add Achievement
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{editingAchievement?.id ? 'Edit Achievement' : 'Add New Achievement'}</DialogTitle>
-              <DialogDescription>
-                {editingAchievement?.id ? 'Update achievement information' : 'Create a new achievement entry'}
-              </DialogDescription>
-            </DialogHeader>
-            
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
-                <Input
-                  id="title"
-                  value={editingAchievement?.title || ''}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
-                  placeholder="e.g., AWS Certified Solutions Architect"
-                  required
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="issuingOrganization">Issuing Organization</Label>
-                  <Input
-                    id="issuingOrganization"
-                    value={editingAchievement?.issuingOrganization || ''}
-                    onChange={(e) => handleInputChange('issuingOrganization', e.target.value)}
-                    placeholder="e.g., Amazon Web Services"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="achievementType">Type</Label>
-                  <Select
-                    value={editingAchievement?.achievementType || ''}
-                    onValueChange={(value) => handleInputChange('achievementType', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {achievementTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="issueDate">Issue Date</Label>
-                  <Input
-                    id="issueDate"
-                    type="date"
-                    value={editingAchievement?.issueDate || ''}
-                    onChange={(e) => handleInputChange('issueDate', e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="expiryDate">Expiry Date (Optional)</Label>
-                  <Input
-                    id="expiryDate"
-                    type="date"
-                    value={editingAchievement?.expiryDate || ''}
-                    onChange={(e) => handleInputChange('expiryDate', e.target.value)}
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="credentialId">Credential ID</Label>
-                  <Input
-                    id="credentialId"
-                    value={editingAchievement?.credentialId || ''}
-                    onChange={(e) => handleInputChange('credentialId', e.target.value)}
-                    placeholder="Unique credential identifier"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="credentialUrl">Credential URL</Label>
-                  <Input
-                    id="credentialUrl"
-                    type="url"
-                    value={editingAchievement?.credentialUrl || ''}
-                    onChange={(e) => handleInputChange('credentialUrl', e.target.value)}
-                    placeholder="https://..."
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="badgeImageUrl">Badge Image URL</Label>
-                <Input
-                  id="badgeImageUrl"
-                  type="url"
-                  value={editingAchievement?.badgeImageUrl || ''}
-                  onChange={(e) => handleInputChange('badgeImageUrl', e.target.value)}
-                  placeholder="https://example.com/badge.png"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={editingAchievement?.description || ''}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
-                  rows={3}
-                  placeholder="Describe what this achievement represents"
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="isFeatured"
-                    checked={editingAchievement?.isFeatured || false}
-                    onCheckedChange={(checked) => handleInputChange('isFeatured', checked as boolean)}
-                  />
-                  <Label htmlFor="isFeatured">Featured achievement</Label>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="displayOrder">Display Order</Label>
-                  <Input
-                    id="displayOrder"
-                    type="number"
-                    value={editingAchievement?.displayOrder || 0}
-                    onChange={(e) => handleInputChange('displayOrder', parseInt(e.target.value) || 0)}
-                  />
-                </div>
-              </div>
-              
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              
-              {success && (
-                <Alert>
-                  <AlertDescription>{success}</AlertDescription>
-                </Alert>
-              )}
-              
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={loading}>
-                  <Save className="h-4 w-4 mr-2" />
-                  {loading ? 'Saving...' : 'Save'}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={handleCreateAchievement} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          Add Achievement
+        </Button>
       </div>
 
       {/* Achievements List */}
@@ -420,7 +174,7 @@ const AchievementManager: React.FC<AchievementManagerProps> = ({ onUpdate }) => 
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => openDialog(achievement)}
+                    onClick={() => handleEditAchievement(achievement)}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>

@@ -24,7 +24,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     
     private final UserDetailsServiceImpl userDetailsService;
@@ -62,27 +62,34 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(authz -> authz
-                // Public endpoints
+            .authorizeHttpRequests(auth -> auth
+                // Public endpoints - authentication not required
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/profiles/**").permitAll()
-                .requestMatchers("/api/experiences/**").permitAll()
-                .requestMatchers("/api/skills/**").permitAll()
-                .requestMatchers("/api/educations/**").permitAll()
-                .requestMatchers("/api/achievements/**").permitAll()
-                .requestMatchers("/api/projects/public/**").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
-                // Admin endpoints
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/projects/**").hasRole("ADMIN")
-                // All other requests need authentication
+                .requestMatchers("/api/contacts/submit").permitAll()
+                // Public GET endpoints for portfolio display
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/profiles").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/profiles/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/projects").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/projects/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/experiences").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/experiences/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/skills").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/skills/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/educations").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/educations/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/achievements").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/achievements/**").permitAll()
+                // Public file access
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/upload/files/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.HEAD, "/api/upload/files/**").permitAll()
+                // ALL OTHER ENDPOINTS (POST, PUT, DELETE) REQUIRE AUTHENTICATION
                 .anyRequest().authenticated()
-            )
-            .authenticationProvider(authenticationProvider())
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+             );
         
-        // For H2 Console (development only)
-        http.headers(headers -> headers.frameOptions().disable());
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        
+        // Security headers configuration
+        http.headers(headers -> headers.frameOptions().deny());
         
         return http.build();
     }
@@ -90,12 +97,17 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        List<String> origins = Arrays.asList(allowedOrigins.split(","));
-        System.out.println("CORS Allowed Origins: " + origins);
-        configuration.setAllowedOrigins(origins);
+        
+        // Use environment variable for allowed origins
+        String[] origins = allowedOrigins.split(",");
+        for (String origin : origins) {
+            configuration.addAllowedOrigin(origin.trim());
+        }
+        
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

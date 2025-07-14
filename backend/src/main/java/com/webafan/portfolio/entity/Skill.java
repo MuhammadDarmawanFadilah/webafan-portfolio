@@ -33,7 +33,7 @@ public class Skill {
     @Column(name = "years_experience")
     private Integer yearsExperience;
     
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description")
     private String description;
     
     @Column(name = "icon_url")
@@ -45,9 +45,13 @@ public class Skill {
     @Column(name = "is_featured")
     private Boolean isFeatured = false;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
-    private Profile profile;
+    // Temporarily removed to avoid constraint issues
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "profile_id")
+    // private Profile profile;
+    
+    @Column(name = "profile_id")
+    private Long profileId;
     
     // Getters and Setters
     public Long getId() {
@@ -122,11 +126,11 @@ public class Skill {
         this.isFeatured = isFeatured;
     }
     
-    public Profile getProfile() {
-        return profile;
+    public Long getProfileId() {
+        return profileId;
     }
     
-    public void setProfile(Profile profile) {
-        this.profile = profile;
+    public void setProfileId(Long profileId) {
+        this.profileId = profileId;
     }
 }

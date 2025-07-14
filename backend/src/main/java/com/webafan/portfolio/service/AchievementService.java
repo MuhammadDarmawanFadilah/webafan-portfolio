@@ -1,7 +1,6 @@
 package com.webafan.portfolio.service;
 
 import com.webafan.portfolio.entity.Achievement;
-import com.webafan.portfolio.entity.Profile;
 import com.webafan.portfolio.repository.AchievementRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +45,7 @@ public class AchievementService {
         achievement.setBadgeImageUrl(achievementDetails.getBadgeImageUrl());
         achievement.setIsFeatured(achievementDetails.getIsFeatured());
         achievement.setDisplayOrder(achievementDetails.getDisplayOrder());
-        achievement.setProfile(achievementDetails.getProfile());
+        achievement.setProfileId(achievementDetails.getProfileId());
         
         return achievementRepository.save(achievement);
     }
@@ -56,10 +55,6 @@ public class AchievementService {
                 .orElseThrow(() -> new RuntimeException("Achievement not found with id: " + id));
         
         achievementRepository.delete(achievement);
-    }
-    
-    public List<Achievement> getAchievementsByProfile(Profile profile) {
-        return achievementRepository.findByProfileOrderByDisplayOrderAsc(profile);
     }
     
     public List<Achievement> getAchievementsByProfileId(Long profileId) {

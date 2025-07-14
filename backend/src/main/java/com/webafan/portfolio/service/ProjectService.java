@@ -28,7 +28,13 @@ public class ProjectService {
     }
     
     public List<Project> getFinishedProjects() {
-        return projectRepository.findByStatusOrderByDisplayOrderAndCreatedAt(ProjectStatus.FINISHED);
+        try {
+            return projectRepository.findByStatusOrderByDisplayOrderAndCreatedAt(ProjectStatus.FINISHED);
+        } catch (Exception e) {
+            System.err.println("Error in getFinishedProjects: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to retrieve finished projects: " + e.getMessage(), e);
+        }
     }
     
     public List<Project> getFeaturedProjects() {

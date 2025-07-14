@@ -37,7 +37,7 @@ public class Achievement {
     @Column(name = "credential_url")
     private String credentialUrl;
     
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description")
     private String description;
     
     @Enumerated(EnumType.STRING)
@@ -53,9 +53,13 @@ public class Achievement {
     @Column(name = "is_featured")
     private Boolean isFeatured = false;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
-    private Profile profile;
+    // Temporarily removed to avoid constraint issues
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "profile_id")
+    // private Profile profile;
+    
+    @Column(name = "profile_id")
+    private Long profileId;
     
     public enum AchievementType {
         CERTIFICATION,
@@ -163,11 +167,11 @@ public class Achievement {
         this.isFeatured = isFeatured;
     }
     
-    public Profile getProfile() {
-        return profile;
+    public Long getProfileId() {
+        return profileId;
     }
     
-    public void setProfile(Profile profile) {
-        this.profile = profile;
+    public void setProfileId(Long profileId) {
+        this.profileId = profileId;
     }
 }

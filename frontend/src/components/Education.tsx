@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { 
@@ -9,9 +10,42 @@ import {
   Star,
   TrendingUp
 } from 'lucide-react'
+import { profileService, type Profile } from '@/services/profileService'
 
 const Education = () => {
-  const education = [
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profileData = await profileService.getPublicProfile();
+      setProfile(profileData);
+      setLoading(false);
+    };
+    fetchProfile();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-gray-50" id="education">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-xl text-gray-600">Loading...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <section className="py-20 bg-gray-50" id="education">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-xl text-gray-600">Profile not found</p>
+        </div>
+      </section>
+    );
+  }
+  // Default education if no data from API
+  const defaultEducation = [
     {
       degree: "Master of Computer Science",
       institution: "Sepuluh Nopember Institute of Technology",
@@ -55,6 +89,9 @@ const Education = () => {
       color: "from-green-600 to-blue-600"
     }
   ]
+
+  // Use education from profile or default
+  const education = defaultEducation; // Using default education as Profile doesn't have educations property
 
   const additionalEducation = [
     {
@@ -110,7 +147,7 @@ const Education = () => {
           {/* Main Education Timeline */}
           <div className="lg:col-span-2">
             <div className="space-y-8">
-              {education.map((edu, index) => (
+              {education.map((edu: any, index: number) => (
                 <Card key={index} className="p-8 bg-white/80 backdrop-blur-sm shadow-xl border-0 hover:shadow-2xl transition-all duration-300">
                   {/* Header */}
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-6">
@@ -156,7 +193,7 @@ const Education = () => {
                       Key Achievements
                     </h4>
                     <div className="grid md:grid-cols-2 gap-2">
-                      {edu.achievements.map((achievement, idx) => (
+                      {edu.achievements.map((achievement: string, idx: number) => (
                         <div key={idx} className="flex items-center space-x-2 text-sm text-gray-700">
                           <Star className="w-3 h-3 text-yellow-500 flex-shrink-0" />
                           <span>{achievement}</span>
@@ -169,7 +206,7 @@ const Education = () => {
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-3">Relevant Coursework</h4>
                     <div className="flex flex-wrap gap-2">
-                      {edu.courses.map((course, idx) => (
+                      {edu.courses.map((course: string, idx: number) => (
                         <Badge key={idx} className="bg-gray-100 text-gray-700 hover:bg-gray-200">
                           {course}
                         </Badge>

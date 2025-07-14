@@ -52,6 +52,16 @@ public class ProfileService {
         profile.setLinkedinUrl(profileDetails.getLinkedinUrl());
         profile.setGithubUrl(profileDetails.getGithubUrl());
         profile.setWebsiteUrl(profileDetails.getWebsiteUrl());
+        profile.setRoles(profileDetails.getRoles());
+        profile.setProjectsCount(profileDetails.getProjectsCount());
+        profile.setDegreesCount(profileDetails.getDegreesCount());
+        profile.setCertificatesCount(profileDetails.getCertificatesCount());
+        profile.setTopSkills(profileDetails.getTopSkills());
+        profile.setPersonalStory(profileDetails.getPersonalStory());
+        profile.setValues(profileDetails.getValues());
+        profile.setExpertiseAreas(profileDetails.getExpertiseAreas());
+        profile.setTechnicalSkills(profileDetails.getTechnicalSkills());
+        profile.setCvFileUrl(profileDetails.getCvFileUrl());
         
         return profileRepository.save(profile);
     }

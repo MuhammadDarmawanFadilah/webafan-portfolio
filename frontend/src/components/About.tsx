@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { 
@@ -10,9 +11,41 @@ import {
   Server, 
   Globe 
 } from 'lucide-react'
+import { profileService, type Profile } from '@/services/profileService'
 
 const About = () => {
-  const values = [
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profileData = await profileService.getPublicProfile();
+      setProfile(profileData);
+      setLoading(false);
+    };
+    fetchProfile();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="about" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-xl text-gray-600">Loading...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <section id="about" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-xl text-gray-600">Profile not found</p>
+        </div>
+      </section>
+    );
+  }
+  const values = profile.values ? profileService.parseValues(profile.values) : [
     {
       icon: <Target className="w-6 h-6" />,
       title: "Problem Solver",
@@ -30,7 +63,7 @@ const About = () => {
     }
   ]
 
-  const expertise = [
+  const expertise = profile.expertiseAreas ? profileService.parseExpertiseAreas(profile.expertiseAreas) : [
     {
       icon: <Code2 className="w-8 h-8" />,
       title: "Backend Development",
@@ -56,6 +89,8 @@ const About = () => {
       color: "bg-orange-500"
     }
   ]
+  
+  const technicalSkills = profile.technicalSkills ? profileService.parseTechnicalSkills(profile.technicalSkills) : []
 
   return (
     <section id="about" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
@@ -71,8 +106,7 @@ const About = () => {
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Vision</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            With over 5 years of experience in software development, I specialize in creating robust, 
-            scalable applications that solve real-world problems and deliver exceptional user experiences.
+            {profile.about || `With over ${profile.yearsExperience || 5} years of experience in software development, I specialize in creating robust, scalable applications that solve real-world problems and deliver exceptional user experiences.`}
           </p>
         </div>
 
@@ -84,19 +118,10 @@ const About = () => {
               <h3 className="text-2xl font-bold text-gray-900 mb-6">My Journey</h3>
               <div className="space-y-4 text-gray-700 leading-relaxed">
                 <p>
-                  My passion for technology began during my computer science studies at Jenderal Soedirman University. 
-                  What started as curiosity about how software works evolved into a deep commitment to crafting 
-                  exceptional digital solutions.
+                  {profile.personalStory || "My passion for technology began during my computer science studies at Jenderal Soedirman University. What started as curiosity about how software works evolved into a deep commitment to crafting exceptional digital solutions."}
                 </p>
                 <p>
-                  After completing my Bachelor's degree with a GPA of 3.65, I pursued a Master's in Computer Science 
-                  at Sepuluh Nopember Institute of Technology, achieving a 3.81 GPA. This academic foundation, 
-                  combined with hands-on experience, has shaped my approach to problem-solving.
-                </p>
-                <p>
-                  <strong>"Tracing, logs and debugging programs have become parts of my daily tasks. 
-                  Effective communication and the use of AI are crucial in task completion. 
-                  Continuous learning, responsibility, and hard work are essential to achieving my vision and mission."</strong>
+                  "I believe in writing clean, maintainable code that not only works but also tells a story. Every line of code is an opportunity to create something meaningful."
                 </p>
               </div>
             </Card>
@@ -105,7 +130,7 @@ const About = () => {
             <Card className="p-8 bg-white/80 backdrop-blur-sm shadow-xl border-0">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">What Drives Me</h3>
               <div className="space-y-6">
-                {values.map((value, index) => (
+                {values.map((value: any, index: number) => (
                   <div key={index} className="flex items-start space-x-4">
                     <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center text-white">
                       {value.icon}
@@ -124,7 +149,7 @@ const About = () => {
           <div className="space-y-8">
             {/* Expertise Areas */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {expertise.map((area, index) => (
+              {expertise.map((area: any, index: number) => (
                 <Card key={index} className="p-6 bg-white/80 backdrop-blur-sm shadow-xl border-0 hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
                   <div className={`w-16 h-16 ${area.color} rounded-2xl flex items-center justify-center text-white mb-4 mx-auto`}>
                     {area.icon}
@@ -163,7 +188,7 @@ const About = () => {
                 <div>
                   <h4 className="font-semibold mb-3">Frameworks & Tools</h4>
                   <div className="flex flex-wrap gap-2">
-                    {['Spring Boot', 'Oracle', 'SQL Server', 'Git', 'Jenkins', 'Angular'].map((skill) => (
+                    {['Spring Boot', 'Oracle', 'SQL Server', 'Git', 'Jenkins', 'Angular'].map((skill: string) => (
                       <Badge key={skill} className="bg-white/20 text-white border-white/30 hover:bg-white/30 transition-colors">
                         {skill}
                       </Badge>
@@ -172,19 +197,18 @@ const About = () => {
                 </div>
               </div>
               
-              <div className="border-t border-white/20 pt-6">
-                <h4 className="font-semibold mb-3">Professional Highlights</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">5+</div>
-                    <div className="text-blue-200 text-sm">Years Experience</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">50+</div>
-                    <div className="text-blue-200 text-sm">Projects Completed</div>
+              {technicalSkills.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-3">Additional Skills</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {technicalSkills.map((skill: string, index: number) => (
+                      <Badge key={index} className="bg-white/20 text-white border-white/30 hover:bg-white/30 transition-colors">
+                        {skill}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
-              </div>
+              )}
             </Card>
           </div>
         </div>

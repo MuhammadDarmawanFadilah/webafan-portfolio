@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Plus, Edit, Trash2, Save, X, GraduationCap } from 'lucide-react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Plus, Edit, Trash2, GraduationCap } from 'lucide-react';
+import { apiEndpoints } from '../../config/config';
 
 interface Education {
   id?: number;
@@ -30,25 +27,11 @@ interface EducationManagerProps {
 
 const EducationManager: React.FC<EducationManagerProps> = ({ onUpdate }) => {
   const [educations, setEducations] = useState<Education[]>([]);
-  const [editingEducation, setEditingEducation] = useState<Education | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
-  const emptyEducation: Education = {
-    degree: '',
-    fieldOfStudy: '',
-    institutionName: '',
-    institutionLocation: '',
-    startDate: '',
-    endDate: '',
-    isCurrent: false,
-    gpa: 0,
-    maxGpa: 4.0,
-    description: '',
-    displayOrder: 0
-  };
+
 
   useEffect(() => {
     fetchEducations();
@@ -56,13 +39,7 @@ const EducationManager: React.FC<EducationManagerProps> = ({ onUpdate }) => {
 
   const fetchEducations = async () => {
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:8080/api/educations', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await fetch(apiEndpoints.educations.base);
       
       if (response.ok) {
         const data = await response.json();
@@ -73,46 +50,12 @@ const EducationManager: React.FC<EducationManagerProps> = ({ onUpdate }) => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingEducation) return;
+  const handleCreateEducation = () => {
+    navigate('/admin/educations/new');
+  };
 
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      const token = localStorage.getItem('adminToken');
-      const url = editingEducation.id 
-        ? `http://localhost:8080/api/educations/${editingEducation.id}`
-        : 'http://localhost:8080/api/educations';
-      
-      const method = editingEducation.id ? 'PUT' : 'POST';
-      
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editingEducation)
-      });
-
-      if (response.ok) {
-        setSuccess(editingEducation.id ? 'Education updated successfully!' : 'Education created successfully!');
-        setIsDialogOpen(false);
-        setEditingEducation(null);
-        fetchEducations();
-        onUpdate();
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Operation failed');
-      }
-    } catch (error) {
-      setError('Network error. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+  const handleEditEducation = (id: number) => {
+    navigate(`/admin/educations/edit/${id}`);
   };
 
   const handleDelete = async (id: number) => {
@@ -120,7 +63,7 @@ const EducationManager: React.FC<EducationManagerProps> = ({ onUpdate }) => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:8080/api/educations/${id}`, {
+      const response = await fetch(`${apiEndpoints.educations.base}/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -137,18 +80,9 @@ const EducationManager: React.FC<EducationManagerProps> = ({ onUpdate }) => {
     }
   };
 
-  const openDialog = (education?: Education) => {
-    setEditingEducation(education ? { ...education } : { ...emptyEducation });
-    setIsDialogOpen(true);
-    setError('');
-    setSuccess('');
-  };
 
-  const handleInputChange = (field: keyof Education, value: string | boolean | number) => {
-    if (editingEducation) {
-      setEditingEducation({ ...editingEducation, [field]: value });
-    }
-  };
+
+
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
@@ -165,174 +99,10 @@ const EducationManager: React.FC<EducationManagerProps> = ({ onUpdate }) => {
           <h2 className="text-2xl font-bold">Education Management</h2>
           <p className="text-gray-600">Manage educational background and qualifications</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => openDialog()} className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Add Education
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{editingEducation?.id ? 'Edit Education' : 'Add New Education'}</DialogTitle>
-              <DialogDescription>
-                {editingEducation?.id ? 'Update education information' : 'Create a new education entry'}
-              </DialogDescription>
-            </DialogHeader>
-            
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="degree">Degree</Label>
-                  <Input
-                    id="degree"
-                    value={editingEducation?.degree || ''}
-                    onChange={(e) => handleInputChange('degree', e.target.value)}
-                    placeholder="e.g., Bachelor of Science"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="fieldOfStudy">Field of Study</Label>
-                  <Input
-                    id="fieldOfStudy"
-                    value={editingEducation?.fieldOfStudy || ''}
-                    onChange={(e) => handleInputChange('fieldOfStudy', e.target.value)}
-                    placeholder="e.g., Computer Science"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="institutionName">Institution Name</Label>
-                  <Input
-                    id="institutionName"
-                    value={editingEducation?.institutionName || ''}
-                    onChange={(e) => handleInputChange('institutionName', e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="institutionLocation">Institution Location</Label>
-                  <Input
-                    id="institutionLocation"
-                    value={editingEducation?.institutionLocation || ''}
-                    onChange={(e) => handleInputChange('institutionLocation', e.target.value)}
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="startDate">Start Date</Label>
-                  <Input
-                    id="startDate"
-                    type="date"
-                    value={editingEducation?.startDate || ''}
-                    onChange={(e) => handleInputChange('startDate', e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="endDate">End Date</Label>
-                  <Input
-                    id="endDate"
-                    type="date"
-                    value={editingEducation?.endDate || ''}
-                    onChange={(e) => handleInputChange('endDate', e.target.value)}
-                    disabled={editingEducation?.isCurrent}
-                  />
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="isCurrent"
-                  checked={editingEducation?.isCurrent || false}
-                  onCheckedChange={(checked) => {
-                    handleInputChange('isCurrent', checked as boolean);
-                    if (checked) {
-                      handleInputChange('endDate', '');
-                    }
-                  }}
-                />
-                <Label htmlFor="isCurrent">Currently studying here</Label>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="gpa">GPA</Label>
-                  <Input
-                    id="gpa"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max={editingEducation?.maxGpa || 4.0}
-                    value={editingEducation?.gpa || ''}
-                    onChange={(e) => handleInputChange('gpa', parseFloat(e.target.value) || 0)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="maxGpa">Max GPA</Label>
-                  <Input
-                    id="maxGpa"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={editingEducation?.maxGpa || 4.0}
-                    onChange={(e) => handleInputChange('maxGpa', parseFloat(e.target.value) || 4.0)}
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={editingEducation?.description || ''}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
-                  rows={3}
-                  placeholder="Additional information, coursework, honors, etc."
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="displayOrder">Display Order</Label>
-                <Input
-                  id="displayOrder"
-                  type="number"
-                  value={editingEducation?.displayOrder || 0}
-                  onChange={(e) => handleInputChange('displayOrder', parseInt(e.target.value) || 0)}
-                />
-              </div>
-              
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              
-              {success && (
-                <Alert>
-                  <AlertDescription>{success}</AlertDescription>
-                </Alert>
-              )}
-              
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={loading}>
-                  <Save className="h-4 w-4 mr-2" />
-                  {loading ? 'Saving...' : 'Save'}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={handleCreateEducation} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          Add Education
+        </Button>
       </div>
 
       {/* Educations List */}
@@ -369,7 +139,7 @@ const EducationManager: React.FC<EducationManagerProps> = ({ onUpdate }) => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => openDialog(education)}
+                    onClick={() => education.id && handleEditEducation(education.id)}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>

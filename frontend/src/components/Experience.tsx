@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { 
@@ -10,9 +11,42 @@ import {
   Server, 
   Users 
 } from 'lucide-react'
+import { profileService, type Profile } from '@/services/profileService'
 
 const Experience = () => {
-  const experiences = [
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profileData = await profileService.getPublicProfile();
+      setProfile(profileData);
+      setLoading(false);
+    };
+    fetchProfile();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-white" id="experience">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-xl text-gray-600">Loading...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <section className="py-20 bg-white" id="experience">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-xl text-gray-600">Profile not found</p>
+        </div>
+      </section>
+    );
+  }
+  // Default experiences if no data from API
+  const defaultExperiences = [
     {
       id: 1,
       title: "Senior Developer",
@@ -49,7 +83,10 @@ const Experience = () => {
       technologies: ["Java", "Spring Framework", "MySQL", "JUnit", "Maven"],
       current: false
     }
-  ]
+  ];
+
+  // Use default experiences since profile doesn't have experiences property
+  const experiences = defaultExperiences;
 
   const skills = [
     { name: "Application Development", icon: <Code className="w-5 h-5" />, color: "bg-blue-500" },
@@ -120,7 +157,7 @@ const Experience = () => {
               <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-500 to-blue-500"></div>
               
               <div className="space-y-12">
-                {experiences.map((exp) => (
+                {experiences.map((exp: any) => (
                   <div key={exp.id} className="relative">
                     {/* Timeline Dot */}
                     <div className={`absolute left-6 w-4 h-4 rounded-full border-4 border-white shadow-lg ${
@@ -168,7 +205,7 @@ const Experience = () => {
                         <div className="mb-6">
                           <h4 className="font-semibold text-gray-900 mb-3">Key Achievements</h4>
                           <ul className="space-y-2">
-                            {exp.achievements.map((achievement, idx) => (
+                            {exp.achievements.map((achievement: string, idx: number) => (
                               <li key={idx} className="flex items-start">
                                 <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
                                 <span className="text-gray-700">{achievement}</span>
@@ -181,7 +218,7 @@ const Experience = () => {
                         <div>
                           <h4 className="font-semibold text-gray-900 mb-3">Technologies Used</h4>
                           <div className="flex flex-wrap gap-2">
-                            {exp.technologies.map((tech) => (
+                            {exp.technologies.map((tech: string) => (
                               <Badge key={tech} className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 transition-colors">
                                 {tech}
                               </Badge>
@@ -198,7 +235,7 @@ const Experience = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-16">
+        {/* <div className="text-center mt-16">
           <Card className="p-8 bg-gradient-to-r from-purple-600 to-blue-600 text-white border-0 shadow-2xl">
             <h3 className="text-2xl font-bold mb-4">Ready to Work Together?</h3>
             <p className="text-purple-100 mb-6 max-w-2xl mx-auto">
@@ -214,7 +251,7 @@ const Experience = () => {
               </button>
             </div>
           </Card>
-        </div>
+        </div> */}
       </div>
     </section>
   )

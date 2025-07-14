@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/projects")
-@CrossOrigin(origins = "http://localhost:5174")
+
 public class ProjectController {
     
     private final ProjectService projectService;
@@ -24,7 +24,7 @@ public class ProjectController {
         this.projectService = projectService;
     }
     
-    // Public endpoints
+    // Public endpoints - No @PreAuthorize needed as they're handled by SecurityConfig
     @GetMapping("/public/all")
     public ResponseEntity<List<Project>> getAllProjectsPublic() {
         List<Project> projects = projectService.getAllProjects();

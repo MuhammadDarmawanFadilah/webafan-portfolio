@@ -1,7 +1,6 @@
 package com.webafan.portfolio.service;
 
 import com.webafan.portfolio.entity.Experience;
-import com.webafan.portfolio.entity.Profile;
 import com.webafan.portfolio.repository.ExperienceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +24,6 @@ public class ExperienceService {
     
     public Optional<Experience> getExperienceById(Long id) {
         return experienceRepository.findById(id);
-    }
-    
-    public List<Experience> getExperiencesByProfile(Profile profile) {
-        return experienceRepository.findByProfileOrderByDisplayOrderAsc(profile);
     }
     
     public List<Experience> getExperiencesByProfileId(Long profileId) {

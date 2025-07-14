@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LogOut, User, Briefcase, GraduationCap, Award, FolderOpen, CheckCircle } from 'lucide-react';
+import { apiEndpoints } from '../../config/config';
 import ProfileManager from './ProfileManager';
 import ExperienceManager from './ExperienceManager';
 import EducationManager from './EducationManager';
@@ -39,13 +40,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       };
 
       const [profilesRes, experiencesRes, educationsRes, skillsRes, achievementsRes, currentProjectsRes, finishedProjectsRes] = await Promise.all([
-        fetch('http://localhost:8080/api/profiles', { headers }),
-        fetch('http://localhost:8080/api/experiences', { headers }),
-        fetch('http://localhost:8080/api/educations', { headers }),
-        fetch('http://localhost:8080/api/skills', { headers }),
-        fetch('http://localhost:8080/api/achievements', { headers }),
-        fetch('http://localhost:8080/api/projects/current', { headers }),
-        fetch('http://localhost:8080/api/projects/finished', { headers })
+        fetch(apiEndpoints.profiles.base),
+        fetch(apiEndpoints.experiences.base),
+        fetch(apiEndpoints.educations.base),
+        fetch(apiEndpoints.skills.base),
+        fetch(apiEndpoints.achievements.base),
+        fetch(apiEndpoints.projects.public.current),
+        fetch(apiEndpoints.projects.public.finished)
       ]);
 
       const [profiles, experiences, educations, skills, achievements, currentProjects, finishedProjects] = await Promise.all([

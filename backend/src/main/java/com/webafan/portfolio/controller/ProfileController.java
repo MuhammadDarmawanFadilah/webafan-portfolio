@@ -78,4 +78,14 @@ public class ProfileController {
         boolean exists = profileService.existsByEmail(email);
         return ResponseEntity.ok(exists);
     }
+    
+    @GetMapping("/public")
+    public ResponseEntity<Profile> getPublicProfile() {
+        // Get the first profile as the main profile for public display
+        List<Profile> profiles = profileService.getAllProfiles();
+        if (!profiles.isEmpty()) {
+            return ResponseEntity.ok(profiles.get(0));
+        }
+        return ResponseEntity.notFound().build();
+    }
 }

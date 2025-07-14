@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Menu, X, Download, Sun, Moon } from 'lucide-react'
+import { profileService, type Profile } from '@/services/profileService'
+import { config } from '@/config/config'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [isDark, setIsDark] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [profile, setProfile] = useState<Profile | null>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -13,6 +16,14 @@ const Navbar = () => {
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profileData = await profileService.getPublicProfile()
+      setProfile(profileData)
+    }
+    fetchProfile()
   }, [])
 
   const navItems = [
@@ -30,6 +41,30 @@ const Navbar = () => {
       element.scrollIntoView({ behavior: 'smooth' })
     }
     setIsOpen(false)
+  }
+
+  const handleDownloadCV = () => {
+    if (!profile?.cvFileUrl) {
+      console.error('No CV file available for download');
+      return;
+    }
+
+    try {
+      // Create a link to download the uploaded CV file
+      const link = document.createElement('a');
+      // Convert relative URL to absolute URL
+      const absoluteUrl = profile.cvFileUrl.startsWith('http') 
+        ? profile.cvFileUrl 
+        : `${config.backendUrl}${profile.cvFileUrl}`;
+      link.href = absoluteUrl;
+      link.download = `CV_${profile.fullName.replace(/\s+/g, '_')}.pdf`;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Error downloading CV file:', err);
+    }
   }
 
   return (
@@ -75,6 +110,7 @@ const Navbar = () => {
             <Button 
               size="sm" 
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+              onClick={handleDownloadCV}
             >
               <Download className="h-4 w-4 mr-2" />
               Download CV
@@ -112,6 +148,7 @@ const Navbar = () => {
               <Button 
                 size="sm" 
                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                onClick={handleDownloadCV}
               >
                 <Download className="h-4 w-4 mr-2" />
                 Download CV

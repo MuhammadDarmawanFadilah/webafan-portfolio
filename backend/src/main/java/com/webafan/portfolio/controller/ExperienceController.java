@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/experiences")
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class ExperienceController {
     
     private final ExperienceService experienceService;

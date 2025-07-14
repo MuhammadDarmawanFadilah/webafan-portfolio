@@ -3,6 +3,7 @@ package com.webafan.portfolio.service;
 import com.webafan.portfolio.entity.User;
 import com.webafan.portfolio.repository.UserRepository;
 import com.webafan.portfolio.util.JwtUtil;
+
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -64,8 +65,10 @@ public class AuthService {
             user.setLastLogin(LocalDateTime.now());
             userRepository.save(user);
             
-            // Generate simple token for now
-            String token = "jwt-token-" + username + "-" + System.currentTimeMillis();
+            // Generate JWT token with role claims
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("role", user.getRole().name());
+            String token = jwtUtil.generateToken(user, claims);
             
             // Prepare response
             Map<String, Object> response = new HashMap<>();

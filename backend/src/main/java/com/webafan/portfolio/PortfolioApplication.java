@@ -2,19 +2,34 @@ package com.webafan.portfolio;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import lombok.extern.slf4j.Slf4j;
 
 @SpringBootApplication
-@CrossOrigin(origins = "http://localhost:5173")
-public class PortfolioApplication {
+@Slf4j
+public class PortfolioApplication implements CommandLineRunner {
+
+	@Value("${app.api.base.url}")
+	private String apiBaseUrl;
+	
+	@Value("${app.frontend.url}")
+	private String frontendUrl;
+	
+	@Value("${spring.datasource.url}")
+	private String databaseUrl;
 
 	public static void main(String[] args) {
 		SpringApplication.run(PortfolioApplication.class, args);
-		System.out.println("\n=== Portfolio Backend API Started ===");
-		System.out.println("API Base URL: http://localhost:8080/api");
-		System.out.println("Frontend URL: http://localhost:5173");
-		System.out.println("Database: MySQL (localhost:3306/portfolio_db)");
-		System.out.println("======================================\n");
+	}
+
+	@Override
+	public void run(String... args) throws Exception {
+		// Log startup information
+		log.info("Portfolio Application started successfully!");
+		log.info("API Base URL: {}", apiBaseUrl);
+		log.info("Frontend URL: {}", frontendUrl);
+		log.info("Database: {}", databaseUrl);
 	}
 
 }

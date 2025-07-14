@@ -6,24 +6,41 @@ import {
   MapPin, 
   Mail, 
   Phone, 
-  Calendar, 
   Download, 
   MessageCircle, 
   Github, 
   Linkedin, 
-  Code, 
-  Sparkles,
-  ArrowDown
+  Code2, 
+  Star,
+  ChevronDown,
+  ExternalLink,
+  Award,
+  Briefcase
 } from 'lucide-react'
+import { profileService, type Profile } from '@/services/profileService'
+import { config } from '@/config/config'
 
 const Hero = () => {
   const [currentRole, setCurrentRole] = useState(0)
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [isVisible, setIsVisible] = useState(false)
   const roles = ['Senior Developer', 'Java Expert', 'Spring Boot Specialist', 'Full Stack Engineer']
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profileData = await profileService.getPublicProfile()
+      setProfile(profileData)
+      setLoading(false)
+      setTimeout(() => setIsVisible(true), 100)
+    }
+    fetchProfile()
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentRole((prev) => (prev + 1) % roles.length)
-    }, 3000)
+    }, 4000)
     return () => clearInterval(interval)
   }, [])
 
@@ -33,6 +50,53 @@ const Hero = () => {
       element.scrollIntoView({ behavior: 'smooth' })
     }
   }
+
+  const handleDownloadCV = () => {
+    if (!profile?.cvFileUrl) {
+      console.error('No CV file available for download');
+      return;
+    }
+
+    try {
+      // Create a link to download the uploaded CV file
+      const link = document.createElement('a');
+      // Convert relative URL to absolute URL
+      const absoluteUrl = profile.cvFileUrl.startsWith('http') 
+        ? profile.cvFileUrl 
+        : `${config.backendUrl}${profile.cvFileUrl}`;
+      link.href = absoluteUrl;
+      link.download = `CV_${profile.fullName.replace(/\s+/g, '_')}.pdf`;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Error downloading CV file:', err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <section className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-xl text-gray-600">Loading...</p>
+        </div>
+      </section>
+    )
+  }
+
+  if (!profile) {
+    return (
+      <section className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-xl text-gray-600">Profile not found</p>
+        </div>
+      </section>
+    )
+  }
+
+  const dynamicRoles = profile.roles ? profileService.parseRoles(profile.roles) : roles
+  const topSkills = profile.topSkills ? profileService.parseTopSkills(profile.topSkills) : ['Java', 'Spring Boot', 'Oracle', 'Git']
 
   return (
     <section id="home" className="min-h-screen relative overflow-hidden">
@@ -56,47 +120,59 @@ const Hero = () => {
           <div className="space-y-8 text-center lg:text-left">
             {/* Greeting */}
             <div className="space-y-4">
-              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full text-sm font-medium text-gray-700 mb-4">
-                <Sparkles className="w-4 h-4 mr-2 text-blue-600" />
-                Welcome to my portfolio
+              <div className="inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm border border-slate-200 rounded-full text-sm font-medium text-slate-700 mb-4 shadow-sm">
+                <Star className="w-4 h-4 mr-2 text-blue-600" />
+                Professional Portfolio
               </div>
               
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
-                <span className="text-gray-900">Hi, I'm </span>
-                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
-                  Darmawan
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+                <span className="text-slate-900">Hi, I'm </span>
+                <span className="bg-gradient-to-r from-blue-600 via-slate-800 to-blue-700 bg-clip-text text-transparent">
+                  {profile.fullName || 'M. Darmawan Fadilah'}
                 </span>
               </h1>
               
-              <div className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-700 h-12">
-                <span className="inline-block transition-all duration-500 transform">
-                  {roles[currentRole]}
+              <div className="text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-700 h-16 flex items-center">
+                <span className="inline-block transition-all duration-700 ease-in-out transform">
+                  {dynamicRoles[currentRole % dynamicRoles.length]}
                 </span>
+                <span className="ml-2 w-0.5 h-8 bg-blue-600 animate-pulse"></span>
               </div>
               
-              <p className="text-lg text-gray-600 max-w-2xl leading-relaxed">
-                Passionate about creating robust, scalable applications with <span className="font-semibold text-blue-600">Java</span> and <span className="font-semibold text-purple-600">Spring Boot</span>. 
-                Transforming complex problems into elegant solutions with 5+ years of experience.
+              <p className="text-lg text-slate-600 max-w-2xl leading-relaxed">
+                {profile.about || profile.personalStory || 'Experienced software engineer specializing in Java ecosystem and enterprise applications. Passionate about building scalable, maintainable solutions that drive business success.'}
               </p>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="text-center p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100">
-                <div className="text-2xl font-bold text-blue-600">5+</div>
-                <div className="text-sm text-gray-600">Years Exp</div>
+            {/* Quick Stats - Enhanced */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="text-center p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 group hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center justify-center mb-2">
+                  <Award className="w-4 h-4 text-blue-600 mr-1" />
+                  <div className="text-xl font-bold text-blue-600">{profile.yearsExperience || 5}+</div>
+                </div>
+                <div className="text-xs text-slate-600">Years Experience</div>
               </div>
-              <div className="text-center p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100">
-                <div className="text-2xl font-bold text-purple-600">50+</div>
-                <div className="text-sm text-gray-600">Projects</div>
+              <div className="text-center p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 group hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center justify-center mb-2">
+                  <Briefcase className="w-4 h-4 text-purple-600 mr-1" />
+                  <div className="text-xl font-bold text-purple-600">{profile.projectsCount || 0}+</div>
+                </div>
+                <div className="text-xs text-slate-600">Projects</div>
               </div>
-              <div className="text-center p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100">
-                <div className="text-2xl font-bold text-green-600">2</div>
-                <div className="text-sm text-gray-600">Degrees</div>
+              <div className="text-center p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 group hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center justify-center mb-2">
+                  <Award className="w-4 h-4 text-green-600 mr-1" />
+                  <div className="text-xl font-bold text-green-600">{profile.degreesCount || 0}</div>
+                </div>
+                <div className="text-xs text-slate-600">Degrees</div>
               </div>
-              <div className="text-center p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100">
-                <div className="text-2xl font-bold text-orange-600">4</div>
-                <div className="text-sm text-gray-600">Certificates</div>
+              <div className="text-center p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 group hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center justify-center mb-2">
+                  <Star className="w-4 h-4 text-orange-600 mr-1" />
+                  <div className="text-xl font-bold text-orange-600">{profile.certificatesCount || 0}</div>
+                </div>
+                <div className="text-xs text-slate-600">Certificates</div>
               </div>
             </div>
 
@@ -104,21 +180,26 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                className="bg-gradient-to-r from-blue-600 to-slate-700 hover:from-blue-700 hover:to-slate-800 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 onClick={scrollToContact}
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
                 Let's Talk
+                <ChevronDown className="ml-2 w-4 h-4" />
               </Button>
               
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="border-2 border-gray-300 hover:border-blue-500 text-gray-700 hover:text-blue-600 px-8 py-3 text-lg font-semibold bg-white/80 backdrop-blur-sm hover:bg-blue-50 transition-all duration-300"
-              >
-                <Download className="w-5 h-5 mr-2" />
-                Download CV
-              </Button>
+              {profile.cvFileUrl && (
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="border-2 border-slate-300 hover:border-slate-500 text-slate-700 hover:text-slate-600 px-8 py-3 text-lg font-semibold bg-white/80 backdrop-blur-sm hover:bg-slate-50 transition-all duration-300 group"
+                  onClick={handleDownloadCV}
+                >
+                  <Download className="w-5 h-5 mr-2" />
+                  Download CV
+                  <ExternalLink className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              )}
             </div>
 
             {/* Social Links */}
@@ -142,11 +223,19 @@ const Hero = () => {
               <div className="relative mb-6">
                 <div className="w-48 h-48 mx-auto relative">
                   <div className="w-full h-full bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 rounded-3xl flex items-center justify-center shadow-2xl">
-                    <img 
-                      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23ffffff;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23f0f9ff;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='100' cy='100' r='90' fill='url(%23grad)'/%3E%3Ccircle cx='100' cy='80' r='25' fill='%233b82f6'/%3E%3Cpath d='M60 140 Q100 120 140 140 Q140 160 100 160 Q60 160 60 140' fill='%233b82f6'/%3E%3C/svg%3E" 
-                      alt="M. Darmawan Fadilah" 
-                      className="w-full h-full rounded-3xl object-cover"
-                    />
+                    {profile.profileImageUrl ? (
+                      <img 
+                        src={profile.profileImageUrl} 
+                        alt={profile.fullName}
+                        className="w-full h-full rounded-3xl object-cover"
+                      />
+                    ) : (
+                      <img 
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23ffffff;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23f0f9ff;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='100' cy='100' r='90' fill='url(%23grad)'/%3E%3Ccircle cx='100' cy='80' r='25' fill='%233b82f6'/%3E%3Cpath d='M60 140 Q100 120 140 140 Q140 160 100 160 Q60 160 60 140' fill='%233b82f6'/%3E%3C/svg%3E" 
+                        alt={profile.fullName || 'M. Darmawan Fadilah'} 
+                        className="w-full h-full rounded-3xl object-cover"
+                      />
+                    )}
                   </div>
                   <div className="absolute -bottom-2 -right-2">
                     <Badge className="bg-green-500 text-white border-2 border-white shadow-lg animate-pulse">
@@ -160,48 +249,26 @@ const Hero = () => {
               {/* Basic Info */}
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  M. Darmawan Fadilah
+                  {profile.fullName || 'M. Darmawan Fadilah'}
                 </h2>
                 <p className="text-lg font-semibold text-blue-600 mb-2">
-                  S.KOM, M.KOM
+                  {profile.title || 'S.KOM, M.KOM'}
                 </p>
                 <Badge className="bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 border-blue-200 px-4 py-1">
-                  <Code className="w-3 h-3 mr-1" />
+                  <Code2 className="w-3 h-3 mr-1" />
                   Senior Developer
                 </Badge>
               </div>
 
-              {/* Contact Info */}
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                  <Mail className="w-4 h-4 mr-3 text-blue-500" />
-                  <span className="truncate">muhammaddarmawan@gmail.com</span>
-                </div>
-                <div className="flex items-center text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                  <Phone className="w-4 h-4 mr-3 text-blue-500" />
-                  <span>+62 856 0012 7 856</span>
-                </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <Calendar className="w-4 h-4 mr-3 text-blue-500" />
-                  <span>08 Desember 1997</span>
-                </div>
-                <div className="flex items-start text-sm text-gray-600">
-                  <MapPin className="w-4 h-4 mr-3 text-blue-500 mt-0.5" />
-                  <span>Purwokerto Utara, Banyumas</span>
+              {/* Location Info - Simplified */}
+              <div className="text-center mb-6">
+                <div className="flex items-center justify-center text-sm text-gray-600">
+                  <MapPin className="w-4 h-4 mr-2 text-blue-500" />
+                  <span>{profile.currentAddress || profile.address || 'Purwokerto Utara, Banyumas'}</span>
                 </div>
               </div>
 
-              {/* Skills Preview */}
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">Top Skills</h3>
-                <div className="flex flex-wrap gap-2">
-                  {['Java', 'Spring Boot', 'Oracle', 'Git'].map((skill) => (
-                    <Badge key={skill} className="bg-blue-50 text-blue-700 border-blue-200 text-xs px-2 py-1">
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
+
 
               {/* Quick Contact */}
               <Button 
@@ -217,7 +284,7 @@ const Hero = () => {
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ArrowDown className="w-6 h-6 text-gray-400" />
+          <ChevronDown className="w-6 h-6 text-gray-400" />
         </div>
       </div>
     </section>

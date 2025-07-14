@@ -12,6 +12,7 @@ import {
   ArrowUp,
   ExternalLink
 } from 'lucide-react'
+import { config } from '../config/config'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
@@ -20,25 +21,25 @@ const Footer = () => {
     {
       name: 'GitHub',
       icon: <Github className="w-5 h-5" />,
-      href: 'https://github.com/darmawanfadilah',
+      href: config.social.github,
       color: 'hover:text-gray-400'
     },
     {
       name: 'LinkedIn',
       icon: <Linkedin className="w-5 h-5" />,
-      href: 'https://linkedin.com/in/darmawanfadilah',
+      href: config.social.linkedin,
       color: 'hover:text-blue-400'
     },
     {
       name: 'Instagram',
       icon: <Instagram className="w-5 h-5" />,
-      href: 'https://instagram.com/darmawanfadilah',
+      href: config.social.instagram,
       color: 'hover:text-pink-400'
     },
     {
       name: 'Twitter',
       icon: <Twitter className="w-5 h-5" />,
-      href: 'https://twitter.com/darmawanfadilah',
+      href: config.social.twitter,
       color: 'hover:text-blue-400'
     }
   ]
