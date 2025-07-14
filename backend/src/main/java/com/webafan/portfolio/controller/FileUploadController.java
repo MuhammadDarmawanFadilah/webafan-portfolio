@@ -69,7 +69,7 @@ public class FileUploadController {
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
             // Return file URL
-            String fileUrl = "/api/upload/files/" + uniqueFilename;
+            String fileUrl = "/uploads/" + uniqueFilename;
             response.put("url", fileUrl);
             response.put("filename", uniqueFilename);
             response.put("originalName", originalFilename);
