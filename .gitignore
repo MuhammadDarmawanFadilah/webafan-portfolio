@@ -103,3 +103,9 @@ coverage/
 
 # Trae AI specific
 .trae/
+
+# Deployment guides (sensitive information)
+VPS-DEPLOYMENT-GUIDE.md
+WEBAFAN-BACKEND-REDEPLOYMENT.md
+WEBAFAN-FRONTEND-REDEPLOYMENT.md
+ENVIRONMENT_SETUP.md
