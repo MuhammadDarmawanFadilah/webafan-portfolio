@@ -68,8 +68,8 @@ public class FileUploadController {
             Path filePath = uploadPath.resolve(uniqueFilename);
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // Return file URL with context path
-            String fileUrl = "/uploads/" + uniqueFilename;
+            // Return file URL
+            String fileUrl = "/api/upload/files/" + uniqueFilename;
             response.put("url", fileUrl);
             response.put("filename", uniqueFilename);
             response.put("originalName", originalFilename);
@@ -129,8 +129,8 @@ public class FileUploadController {
             Path filePath = uploadPath.resolve(uniqueFilename);
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // Return file URL with context path
-            String fileUrl = "/uploads/" + uniqueFilename;
+            // Return file URL
+            String fileUrl = "/api/upload/files/" + uniqueFilename;
             response.put("fileUrl", fileUrl);
             response.put("filename", uniqueFilename);
             response.put("originalName", originalFilename);
