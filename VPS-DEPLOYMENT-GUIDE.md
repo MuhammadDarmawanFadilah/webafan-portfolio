@@ -331,118 +331,29 @@ sudo systemctl start trensilapor-frontend
 
 #### **STAGE 9: WebAfan Portfolio Deployment (mdarmawanf.my.id)**
 
-##### **9.1: Portfolio Backend Deployment (Spring Boot)**
+##### **9.1: Portfolio Backend Deployment (Tomcat)**
 ```bash
 sudo git clone https://github.com/MuhammadDarmawanFadilah/webafan-portfolio.git /tmp/webafan-portfolio && \
 cd /tmp/webafan-portfolio/backend && \
-sudo tee src/main/resources/application-production.properties > /dev/null << 'EOF'
-# Database Configuration
-spring.datasource.url=jdbc:mysql://localhost:3306/webafan_portfolio
-spring.datasource.username=root
-spring.datasource.password=
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-
-# JPA Configuration
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=false
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
-spring.jpa.properties.hibernate.format_sql=true
-
-# Server Configuration
-server.port=8081
-server.servlet.context-path=/portfolio
-
-# CORS Configuration
-cors.allowed.origins=https://mdarmawanf.my.id
-cors.allowed.methods=GET,POST,PUT,DELETE,OPTIONS
-cors.allowed.headers=*
-cors.allow.credentials=true
-
-# JWT Configuration
-jwt.secret=${JWT_SECRET:mySecretKey123456789012345678901234567890}
-jwt.expiration=${JWT_EXPIRATION:86400000}
-
-# Logging Configuration
-logging.level.com.webafan.portfolio=INFO
-logging.level.org.springframework.security=INFO
-logging.level.org.hibernate.SQL=WARN
-
-# WhatsApp API Configuration
-whatsapp.api.url=${WHATSAPP_API_URL:https://api.whatsapp.com}
-whatsapp.api.token=${WHATSAPP_API_TOKEN:your_token_here}
-
-# Application URLs
-app.frontend.url=https://mdarmawanf.my.id
-app.backend.url=https://mdarmawanf.my.id
-app.api.base.url=https://mdarmawanf.my.id/portfolio/api
-
-# File Upload Configuration
-file.upload.dir=/opt/webafan/uploads
-file.upload.max-size=10MB
-file.upload.max-request-size=10MB
-spring.servlet.multipart.max-file-size=10MB
-spring.servlet.multipart.max-request-size=10MB
-EOF
-sudo mysql -e "CREATE DATABASE IF NOT EXISTS webafan_portfolio;" && \
+# Use existing application-production.properties file
+sudo mysql -e "CREATE DATABASE IF NOT EXISTS webafan_portfolio CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" && \
 sudo mkdir -p /opt/webafan/uploads && \
-sudo chown -R root:root /opt/webafan && \
+sudo chown -R tomcat:tomcat /opt/webafan && \
 sudo mvn clean package -DskipTests -Dspring.profiles.active=production && \
-sudo cp target/*.jar /opt/webafan/portfolio.jar && \
-sudo tee /etc/systemd/system/webafan-backend.service > /dev/null << 'EOF'
-[Unit]
-Description=WebAfan Portfolio Backend Spring Boot Application
-After=network.target mysql.service
-
-[Service]
-Type=simple
-User=root
-WorkingDirectory=/opt/webafan
-ExecStart=/usr/lib/jvm/java-21-openjdk-amd64/bin/java -jar -Dspring.profiles.active=production -Xms2G -Xmx4G portfolio.jar
-Restart=always
-Environment=JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
-LimitNOFILE=65536
-
-[Install]
-WantedBy=multi-user.target
-EOF
-sudo systemctl daemon-reload && \
-sudo systemctl enable webafan-backend && \
-sudo systemctl start webafan-backend
+sudo cp target/*.war /opt/tomcat/webapps/portfolio.war && \
+sudo chown tomcat:tomcat /opt/tomcat/webapps/portfolio.war && \
+sudo systemctl restart tomcat
 ```
 
 ##### **9.2: Portfolio Frontend Deployment (React/Vite)**
 ```bash
 sudo mkdir -p /var/www/mdarmawanf.my.id && \
 cd /tmp/webafan-portfolio/frontend && \
-sudo tee .env.production > /dev/null << 'EOF'
-# API Configuration
-VITE_API_BASE_URL=https://mdarmawanf.my.id/portfolio/api
-VITE_BACKEND_URL=https://mdarmawanf.my.id
-VITE_FRONTEND_URL=https://mdarmawanf.my.id
-
-# Contact Information
-VITE_CONTACT_EMAIL=muhammaddarmawan@gmail.com
-VITE_CONTACT_PHONE=+62 856 0012 7 856
-VITE_CONTACT_ADDRESS=Griya Satria Indah 02 Blok M No. 19 Rt 03 Rw. 10 Sukamakmur, Purwokerto Utara, Banyumas, Jawa Tengah (53125)
-
-# Social Media Links
-VITE_LINKEDIN_URL=https://linkedin.com/in/muhammad-darmawan-fadilah
-VITE_GITHUB_URL=https://github.com/MuhammadDarmawanFadilah
-VITE_INSTAGRAM_URL=https://instagram.com/mdarmawanf
-VITE_TWITTER_URL=https://twitter.com/mdarmawanf
-
-# Google Maps
-VITE_MAPS_URL=https://maps.app.goo.gl/6ahYXYBJYCCWA9e48
-
-# Environment
-VITE_NODE_ENV=production
-VITE_APP_NAME=WebAfan Portfolio
-VITE_APP_VERSION=1.0.0
-EOF
+# Use existing .env.production file
 sudo npm install && \
 sudo npm run build && \
 sudo cp -r dist/* /var/www/mdarmawanf.my.id/ && \
-sudo chown -R www-data:www-data /var/www/mdarmawanf.my.id
+sudo chown -R tomcat:tomcat /var/www/mdarmawanf.my.id
 ```
 
 ##### **9.3: Nginx Configuration for Portfolio**
@@ -466,9 +377,9 @@ server {
         }
     }
     
-    # Backend API (Spring Boot)
+    # Backend API (Tomcat)
     location /portfolio {
-        proxy_pass http://localhost:8081;
+        proxy_pass http://localhost:8080/portfolio;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -535,9 +446,9 @@ server {
         }
     }
     
-    # Backend API (Spring Boot)
+    # Backend API (Tomcat)
     location /portfolio {
-        proxy_pass http://localhost:8081;
+        proxy_pass http://localhost:8080/portfolio;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -575,9 +486,9 @@ server {
         }
     }
     
-    # Backend API (Spring Boot)
+    # Backend API (Tomcat)
     location /portfolio {
-        proxy_pass http://localhost:8081;
+        proxy_pass http://localhost:8080/portfolio;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -590,7 +501,6 @@ server {
     # File uploads
     location /uploads {
         alias /opt/webafan/uploads;
-        proxy_set_header Host $host;
         expires 1y;
         add_header Cache-Control "public";
     }
@@ -608,8 +518,8 @@ echo "✅ Backend API: https://mdarmawanf.my.id/portfolio/api" && \
 echo "✅ Database: webafan_portfolio (MySQL)" && \
 echo "✅ File Uploads: /opt/webafan/uploads" && \
 echo "🔒 SSL Certificate: Auto-renewal enabled" && \
-echo "📊 Performance: Backend 4GB, Frontend optimized" && \
-sudo systemctl status mysql webafan-backend nginx --no-pager && \
+echo "📊 Performance: Tomcat optimized, Frontend optimized" && \
+sudo systemctl status mysql tomcat nginx --no-pager && \
 mysql -u root -e "SHOW DATABASES;" | grep webafan_portfolio && \
 curl -I https://mdarmawanf.my.id && \
 curl -I https://mdarmawanf.my.id/portfolio/api/profile
@@ -619,21 +529,21 @@ curl -I https://mdarmawanf.my.id/portfolio/api/profile
 
 #### **Portfolio Service Restart:**
 ```bash
-sudo systemctl restart mysql webafan-backend nginx
+sudo systemctl restart mysql tomcat nginx
 ```
 
 #### **Portfolio Status Check:**
 ```bash
-sudo systemctl status mysql webafan-backend nginx --no-pager
+sudo systemctl status mysql tomcat nginx --no-pager
 ```
 
 #### **Portfolio Backend Update:**
 ```bash
-sudo systemctl stop webafan-backend
 cd /tmp/webafan-portfolio/backend && sudo git pull
 sudo mvn clean package -DskipTests -Dspring.profiles.active=production
-sudo cp target/*.jar /opt/webafan/portfolio.jar
-sudo systemctl start webafan-backend
+sudo cp target/*.war /opt/tomcat/webapps/portfolio.war
+sudo chown tomcat:tomcat /opt/tomcat/webapps/portfolio.war
+sudo systemctl restart tomcat
 ```
 
 #### **Portfolio Frontend Update:**
@@ -641,7 +551,7 @@ sudo systemctl start webafan-backend
 cd /tmp/webafan-portfolio/frontend && sudo git pull
 sudo npm run build
 sudo cp -r dist/* /var/www/mdarmawanf.my.id/
-sudo chown -R www-data:www-data /var/www/mdarmawanf.my.id
+sudo chown -R tomcat:tomcat /var/www/mdarmawanf.my.id
 ```
 
 #### **Portfolio Database Backup:**
@@ -651,13 +561,14 @@ sudo mysqldump -u root webafan_portfolio > /opt/webafan/backup_$(date +%Y%m%d_%H
 
 #### **Portfolio Logs Check:**
 ```bash
-sudo journalctl -u webafan-backend -f --no-pager
+sudo journalctl -u tomcat -f --no-pager
+sudo tail -f /opt/tomcat/logs/catalina.out
 sudo tail -f /var/log/nginx/access.log
 sudo tail -f /var/log/nginx/error.log
 ```
 
 ### 📊 PORTFOLIO PERFORMANCE SPECS
-- **Backend**: 4GB RAM, Spring Boot optimized
+- **Backend**: Tomcat deployment optimized
 - **Frontend**: React/Vite build optimized
 - **Database**: webafan_portfolio (MySQL)
 - **SSL**: Auto-renewal enabled
@@ -671,5 +582,5 @@ sudo tail -f /var/log/nginx/error.log
 
 ---
 **Portfolio Deployment**: Ubuntu 25.04 VPS  
-**Resource Allocation**: Optimized for Portfolio  
-**Deployment Time**: ~8 minutes
+**Resource Allocation**: Tomcat + Nginx optimized  
+**Deployment Time**: ~5 minutes

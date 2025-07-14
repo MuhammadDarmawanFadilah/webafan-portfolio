@@ -82,6 +82,7 @@ public class SecurityConfig {
                 // Public file access
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/upload/files/**").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.HEAD, "/api/upload/files/**").permitAll()
+                .requestMatchers("/uploads/**").permitAll()
                 // ALL OTHER ENDPOINTS (POST, PUT, DELETE) REQUIRE AUTHENTICATION
                 .anyRequest().authenticated()
              );
