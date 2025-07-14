@@ -349,7 +349,6 @@ sudo systemctl restart tomcat
 ```bash
 sudo mkdir -p /var/www/mdarmawanf.my.id && \
 cd /tmp/webafan-portfolio/frontend && \
-# Use existing .env.production file
 sudo npm install && \
 sudo npm run build && \
 sudo cp -r dist/* /var/www/mdarmawanf.my.id/ && \
