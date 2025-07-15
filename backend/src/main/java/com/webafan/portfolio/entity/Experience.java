@@ -38,22 +38,22 @@ public class Experience {
     @Column(name = "is_current")
     private Boolean isCurrent = false;
     
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
     
-    @Column(name = "technologies_used")
+    @Column(name = "technologies_used", columnDefinition = "TEXT")
     private String technologiesUsed;
     
-    @Column(name = "key_achievements")
+    @Column(name = "key_achievements", columnDefinition = "TEXT")
     private String keyAchievements;
     
     @Column(name = "display_order")
     private Integer displayOrder;
     
-    @Column(name = "responsibilities")
+    @Column(name = "responsibilities", columnDefinition = "TEXT")
     private String responsibilities;
     
-    @Column(name = "technologies")
+    @Column(name = "technologies", columnDefinition = "TEXT")
     private String technologies;
     
     // Temporarily removed to avoid constraint issues
