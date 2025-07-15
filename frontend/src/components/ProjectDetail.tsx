@@ -57,11 +57,11 @@ const ProjectDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
         <div className="max-w-4xl mx-auto">
-          <Skeleton className="h-12 w-3/4 mb-6" />
-          <Skeleton className="h-64 w-full mb-4" />
-          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-8 sm:h-12 w-3/4 mb-4 sm:mb-6" />
+          <Skeleton className="h-48 sm:h-64 w-full mb-3 sm:mb-4" />
+          <Skeleton className="h-24 sm:h-32 w-full" />
         </div>
       </div>
     );
@@ -69,9 +69,9 @@ const ProjectDetail: React.FC = () => {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-4xl mx-auto text-center py-20">
-          <h2 className="text-2xl font-bold text-red-600">{error || 'Project not found'}</h2>
+      <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
+        <div className="max-w-4xl mx-auto text-center py-12 sm:py-20">
+          <h2 className="text-xl sm:text-2xl font-bold text-red-600">{error || 'Project not found'}</h2>
         </div>
       </div>
     );
@@ -80,103 +80,112 @@ const ProjectDetail: React.FC = () => {
   const status = project.status || 'planning'; // Default to planning if not set
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
       <div className="max-w-4xl mx-auto">
         <Button 
           variant="outline" 
           onClick={() => window.history.back()} 
-          className="mb-6"
+          className="mb-4 sm:mb-6 text-sm sm:text-base"
         >
-          <ChevronLeft className="h-4 w-4 mr-2" />
-          Back to Projects
+          <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+          <span className="hidden xs:inline">Back to Projects</span>
+          <span className="xs:hidden">Back</span>
         </Button>
 
-        <Card className="bg-white border-gray-200 mb-6">
-          <CardHeader>
-            <div className="flex justify-between items-start">
-              <div>
-                <CardTitle className="text-3xl font-bold text-gray-900">{project.title}</CardTitle>
-                <Badge className={`${getStatusColor(status)} mt-2`}>
-                  {getStatusIcon(status)}
+        <Card className="bg-white border-gray-200 mb-4 sm:mb-6">
+          <CardHeader className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 sm:gap-0">
+              <div className="flex-1">
+                <CardTitle className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">{project.title}</CardTitle>
+                <Badge className={`${getStatusColor(status)} mt-2 text-xs sm:text-sm`}>
+                  <div className="w-3 h-3 sm:w-4 sm:h-4 mr-1">
+                    {getStatusIcon(status)}
+                  </div>
                   {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
                 </Badge>
               </div>
               {project.isFeatured && (
-                <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                  <Star className="h-4 w-4 mr-1" />
+                <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 text-xs sm:text-sm self-start">
+                  <Star className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                   Featured
                 </Badge>
               )}
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-6">
             {project.imageUrl && (
               <img 
                 src={project.imageUrl} 
                 alt={project.title} 
-                className="w-full h-64 object-cover rounded-lg mb-6" 
+                className="w-full h-48 sm:h-64 object-cover rounded-lg mb-4 sm:mb-6" 
               />
             )}
-            <p className="text-gray-600 mb-6">{project.description}</p>
+            <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base leading-relaxed">{project.description}</p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
               <div>
-                <h3 className="font-semibold mb-2">Project Timeline</h3>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Calendar className="h-4 w-4" />
-                  {new Date(project.startDate).toLocaleDateString()} - {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'Ongoing'}
+                <h3 className="font-semibold mb-2 text-sm sm:text-base">Project Timeline</h3>
+                <div className="flex items-start gap-2 text-gray-600 text-xs sm:text-sm">
+                  <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mt-0.5 flex-shrink-0" />
+                  <span className="leading-relaxed">
+                    {new Date(project.startDate).toLocaleDateString()} - {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'Ongoing'}
+                  </span>
                 </div>
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Team & Role</h3>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Users className="h-4 w-4" />
-                  Team Size: {project.teamSize} | My Role: {project.myRole}
+                <h3 className="font-semibold mb-2 text-sm sm:text-base">Team & Role</h3>
+                <div className="flex items-start gap-2 text-gray-600 text-xs sm:text-sm">
+                  <Users className="h-3 w-3 sm:h-4 sm:w-4 mt-0.5 flex-shrink-0" />
+                  <span className="leading-relaxed">
+                    <span className="block sm:inline">Team Size: {project.teamSize}</span>
+                    <span className="hidden sm:inline"> | </span>
+                    <span className="block sm:inline">My Role: {project.myRole}</span>
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="mb-6">
-              <h3 className="font-semibold mb-2">Technologies</h3>
-              <div className="flex flex-wrap gap-2">
+            <div className="mb-4 sm:mb-6">
+              <h3 className="font-semibold mb-2 text-sm sm:text-base">Technologies</h3>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 {parseTechnologies(project.technologies).map((tech, index) => (
-                  <Badge key={index} variant="outline">{tech}</Badge>
+                  <Badge key={index} variant="outline" className="text-xs sm:text-sm px-2 py-1">{tech}</Badge>
                 ))}
               </div>
             </div>
 
             {project.features && (
-              <div className="mb-6">
-                <h3 className="font-semibold mb-2">Key Features</h3>
-                <ul className="list-disc pl-5 text-gray-600">
+              <div className="mb-4 sm:mb-6">
+                <h3 className="font-semibold mb-2 text-sm sm:text-base">Key Features</h3>
+                <ul className="list-disc pl-4 sm:pl-5 text-gray-600 text-xs sm:text-sm space-y-1">
                   {project.features.split('\n').map((feature, index) => (
-                    <li key={index}>{feature}</li>
+                    <li key={index} className="leading-relaxed">{feature}</li>
                   ))}
                 </ul>
               </div>
             )}
 
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
               {project.projectUrl && (
-                <Button variant="outline" asChild>
+                <Button variant="outline" asChild className="text-xs sm:text-sm">
                   <a href={project.projectUrl} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-4 w-4 mr-2" />
+                    <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     Project Site
                   </a>
                 </Button>
               )}
               {project.githubUrl && (
-                <Button variant="outline" asChild>
+                <Button variant="outline" asChild className="text-xs sm:text-sm">
                   <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                    <Github className="h-4 w-4 mr-2" />
+                    <Github className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     GitHub
                   </a>
                 </Button>
               )}
               {project.demoUrl && (
-                <Button variant="outline" asChild>
+                <Button variant="outline" asChild className="text-xs sm:text-sm">
                   <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
-                    <Play className="h-4 w-4 mr-2" />
+                    <Play className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     Demo
                   </a>
                 </Button>

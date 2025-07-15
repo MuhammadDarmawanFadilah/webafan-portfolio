@@ -205,38 +205,38 @@ const Contact = () => {
   }
 
   return (
-    <section id="contact" className="py-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+    <section id="contact" className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white font-medium mb-6 shadow-lg">
-            <Mail className="w-4 h-4 mr-2 text-blue-400" />
-            Get In Touch
+        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+          <div className="inline-flex items-center px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white font-medium mb-4 sm:mb-6 shadow-lg">
+            <Mail className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 text-blue-400" />
+            <span className="text-sm sm:text-base">Get In Touch</span>
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-            Let's Work{' '}
-            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-blue-300 bg-clip-text text-transparent">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight px-4">
+            <span className="block sm:inline">Let's Work</span>{' '}
+            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-blue-300 bg-clip-text text-transparent block sm:inline">
               Together
             </span>
           </h2>
-          <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed px-4">
             Have a project in mind or want to discuss opportunities?{' '}
             <span className="text-white font-medium">Let's create something amazing together.</span>{' '}
             I'll respond within 24 hours.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-12">
+        <div className="grid lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <Card className="p-8 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl">
-              <h3 className="text-2xl font-bold text-white mb-6">Send Me a Message</h3>
+            <Card className="p-4 sm:p-6 lg:p-8 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-4 sm:mb-6">Send Me a Message</h3>
               
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      <User className="w-4 h-4 inline mr-2" />
+                    <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                      <User className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2" />
                       Full Name
                     </label>
                     <input
@@ -244,15 +244,15 @@ const Contact = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                       placeholder="Your full name"
                       required
                     />
                   </div>
                   {contactMethod === 'email' ? (
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        <Mail className="w-4 h-4 inline mr-2" />
+                      <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                        <Mail className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2" />
                         Email Address
                       </label>
                       <input
@@ -260,15 +260,15 @@ const Contact = () => {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                         placeholder="your.email@example.com"
                         required
                       />
                     </div>
                   ) : (
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        <MessageCircle className="w-4 h-4 inline mr-2" />
+                      <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                        <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2" />
                         Phone Number
                       </label>
                       <input
@@ -276,7 +276,7 @@ const Contact = () => {
                         name="phoneNumber"
                         value={formData.phoneNumber}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                         placeholder="+62 812 3456 7890"
                         required
                       />
@@ -285,8 +285,8 @@ const Contact = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    <FileText className="w-4 h-4 inline mr-2" />
+                  <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                    <FileText className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2" />
                     Subject
                   </label>
                   <input
@@ -294,7 +294,7 @@ const Contact = () => {
                     name="subject"
                     value={formData.subject}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                     placeholder="What's this about?"
                     required
                   />
@@ -302,12 +302,12 @@ const Contact = () => {
 
                 {/* Contact Method Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">
-                    <Send className="w-4 h-4 inline mr-2" />
+                  <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-3">
+                    <Send className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2" />
                     Preferred Contact Method
                   </label>
-                  <div className="flex space-x-4">
-                    <label className="flex items-center space-x-3 cursor-pointer">
+                  <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                    <label className="flex items-center space-x-3 cursor-pointer p-3 sm:p-0 bg-white/5 sm:bg-transparent rounded-lg sm:rounded-none">
                       <input
                         type="radio"
                         name="contactMethod"
@@ -318,12 +318,12 @@ const Contact = () => {
                       />
                       <div className="flex items-center space-x-2">
                         <MessageCircle className="w-4 h-4 text-green-400" />
-                        <span className="text-white font-medium">WhatsApp</span>
+                        <span className="text-white font-medium text-sm sm:text-base">WhatsApp</span>
                         <Badge className="bg-green-600/20 text-green-300 text-xs">Faster</Badge>
                       </div>
                     </label>
                     
-                    <label className="flex items-center space-x-3 cursor-pointer">
+                    <label className="flex items-center space-x-3 cursor-pointer p-3 sm:p-0 bg-white/5 sm:bg-transparent rounded-lg sm:rounded-none">
                       <input
                         type="radio"
                         name="contactMethod"
@@ -334,23 +334,23 @@ const Contact = () => {
                       />
                       <div className="flex items-center space-x-2">
                         <Mail className="w-4 h-4 text-blue-400" />
-                        <span className="text-white font-medium">Email</span>
+                        <span className="text-white font-medium text-sm sm:text-base">Email</span>
                       </div>
                     </label>
                   </div>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    <MessageCircle className="w-4 h-4 inline mr-2" />
+                  <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                    <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1.5 sm:mr-2" />
                     Message
                   </label>
                   <textarea
                     name="message"
                     value={formData.message}
                     onChange={handleInputChange}
-                    rows={6}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    rows={5}
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm sm:text-base"
                     placeholder="Tell me about your project or inquiry..."
                     required
                   />
@@ -375,7 +375,7 @@ const Contact = () => {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl ${
+                  className={`w-full font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl text-sm sm:text-base ${
                     contactMethod === 'whatsapp' 
                       ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white'
                       : 'bg-gradient-to-r from-blue-600 to-slate-700 hover:from-blue-700 hover:to-slate-800 text-white'
@@ -402,28 +402,28 @@ const Contact = () => {
           </div>
 
           {/* Contact Information */}
-          <div className="lg:col-span-1 space-y-8">
+          <div className="lg:col-span-1 space-y-6 sm:space-y-8">
             {/* Contact Details */}
-            <Card className="p-6 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl">
-              <h3 className="text-xl font-bold text-white mb-6">Contact Information</h3>
-              <div className="space-y-4">
+            <Card className="p-4 sm:p-6 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl">
+              <h3 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6">Contact Information</h3>
+              <div className="space-y-3 sm:space-y-4">
                 {contactInfo.map((info, index) => (
                   <a
                     key={index}
                     href={info.href}
                     target={info.href.startsWith('http') ? '_blank' : undefined}
                     rel={info.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    className="flex items-center space-x-4 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-all duration-300 group"
+                    className="flex items-center space-x-3 sm:space-x-4 p-2.5 sm:p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <div className={`w-12 h-12 bg-gradient-to-r ${info.color} rounded-lg flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300`}>
-                      {info.icon}
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${info.color} rounded-lg flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300`}>
+                      <div className="w-4 h-4 sm:w-6 sm:h-6">{info.icon}</div>
                     </div>
-                    <div className="flex-1">
-                      <div className="text-sm text-gray-400">{info.label}</div>
-                      <div className="text-white font-medium">{info.value}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs sm:text-sm text-gray-400">{info.label}</div>
+                      <div className="text-white font-medium text-sm sm:text-base break-words">{info.value}</div>
                     </div>
                     {info.href.startsWith('http') && (
-                      <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                      <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-white flex-shrink-0" />
                     )}
                   </a>
                 ))}
@@ -431,24 +431,24 @@ const Contact = () => {
             </Card>
 
             {/* Quick Actions */}
-            <Card className="p-6 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl">
-              <h3 className="text-xl font-bold text-white mb-6">Quick Connect</h3>
+            <Card className="p-4 sm:p-6 bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl">
+              <h3 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6">Quick Connect</h3>
               <div className="space-y-3">
                 <Button
                   onClick={openWhatsAppChat}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 transition-all duration-300 hover:scale-105 shadow-lg"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 sm:py-3 transition-all duration-300 hover:scale-105 shadow-lg text-sm sm:text-base"
                 >
-                  <MessageCircle className="w-4 h-4 mr-2" />
+                  <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                   WhatsApp Chat
                 </Button>
                 
                 <Button
                   asChild
                   variant="outline"
-                  className="w-full border-white/20 text-white hover:bg-white/10 py-3 transition-all duration-300 hover:scale-105"
+                  className="w-full border-white/20 text-white hover:bg-white/10 py-2.5 sm:py-3 transition-all duration-300 hover:scale-105 text-sm sm:text-base"
                 >
                   <a href={`mailto:${config.email}`}>
-                    <Mail className="w-4 h-4 mr-2" />
+                    <Mail className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                     Send Email
                   </a>
                 </Button>
@@ -456,10 +456,10 @@ const Contact = () => {
                 <Button
                   asChild
                   variant="outline"
-                  className="w-full border-white/20 text-white hover:bg-white/10 py-3 transition-all duration-300 hover:scale-105"
+                  className="w-full border-white/20 text-white hover:bg-white/10 py-2.5 sm:py-3 transition-all duration-300 hover:scale-105 text-sm sm:text-base"
                 >
                   <a href={`tel:+${config.whatsapp.number.replace(/\s/g, '')}`}>
-                    <Phone className="w-4 h-4 mr-2" />
+                    <Phone className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                     Direct Call
                   </a>
                 </Button>
@@ -467,25 +467,25 @@ const Contact = () => {
             </Card>
 
             {/* Response Time */}
-            <Card className="p-6 bg-gradient-to-r from-blue-600 to-slate-700 shadow-2xl border-0">
-              <h3 className="text-xl font-bold text-white mb-4">Response Time</h3>
+            <Card className="p-4 sm:p-6 bg-gradient-to-r from-blue-600 to-slate-700 shadow-2xl border-0">
+              <h3 className="text-lg sm:text-xl font-bold text-white mb-4">Response Time</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-blue-100 font-medium">WhatsApp</span>
-                  <Badge className="bg-white/20 text-white font-semibold">&lt; 1 hour</Badge>
+                  <span className="text-blue-100 font-medium text-sm sm:text-base">WhatsApp</span>
+                  <Badge className="bg-white/20 text-white font-semibold text-xs sm:text-sm">&lt; 1 hour</Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-blue-100 font-medium">Email</span>
-                  <Badge className="bg-white/20 text-white font-semibold">&lt; 24 hours</Badge>
+                  <span className="text-blue-100 font-medium text-sm sm:text-base">Email</span>
+                  <Badge className="bg-white/20 text-white font-semibold text-xs sm:text-sm">&lt; 24 hours</Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-blue-100 font-medium">Phone Call</span>
-                  <Badge className="bg-white/20 text-white font-semibold">Immediate</Badge>
+                  <span className="text-blue-100 font-medium text-sm sm:text-base">Phone Call</span>
+                  <Badge className="bg-white/20 text-white font-semibold text-xs sm:text-sm">Immediate</Badge>
                 </div>
               </div>
               
-              <div className="mt-6 pt-4 border-t border-white/20">
-                <p className="text-blue-100 text-sm leading-relaxed">
+              <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-white/20">
+                <p className="text-blue-100 text-xs sm:text-sm leading-relaxed">
                   <span className="font-medium">Available:</span> Monday to Friday, 9 AM - 6 PM (GMT+7)<br/>
                   <span className="font-medium">Emergency:</span> WhatsApp 24/7
                 </p>
