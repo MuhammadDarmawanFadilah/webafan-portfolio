@@ -99,13 +99,12 @@ public class DataSeeder implements CommandLineRunner {
     private void createExperiences(Profile profile) {
         Experience exp1 = new Experience();
         exp1.setJobTitle("Junior Java Developer");
-        exp1.setCompanyName("PT. Askrindo Syariah | Jakarta, Indonesia");
+        exp1.setCompanyName("PT. Abhimata Persada");
         exp1.setCompanyLocation("Jakarta, Indonesia");
-        exp1.setStartDate(LocalDate.of(2019, 1, 1));
-        exp1.setEndDate(LocalDate.of(2020, 12, 31));
+        exp1.setStartDate(LocalDate.of(2019, 3, 18));
+        exp1.setEndDate(LocalDate.of(2020, 6, 30));
         exp1.setIsCurrent(false);
-        exp1.setDescription("It started with a bootcamp, leading me to roles as a Junior Technical " +
-                "Analyst, and for a year in IT Product Developer for back office applications.");
+        exp1.setDescription("After completing a 3-month bootcamp and gaining initial experience as a Software Tester for one month, I advanced to a Junior Java Developer position. I further honed my skills over the next year as an IT Product Developer, focusing on the development of robust back-office applications");
         exp1.setTechnologiesUsed("Java, Spring Framework, MySQL, JUnit, Selenium");
         exp1.setKeyAchievements("• Completed intensive Java bootcamp program\n" +
                 "• Transitioned from trainee to full-time developer\n" +
@@ -113,13 +112,16 @@ public class DataSeeder implements CommandLineRunner {
                 "• Gained experience in Agile development");
         exp1.setDisplayOrder(1);
         exp1.setProfileId(profile.getId());
+        // Add missing fields to match the expected JSON structure
+        exp1.setResponsibilities("I am responsible for developing comprehensive documentation, including Business Requirements Documents (BRD), Functional Specification Documents (FSD), Technical Specification Documents (TSD), System Guidelines, and detailed Test Cases. Concurrently, I am tasked with designing and developing the website interface for OPIC, our core back-office product, ensuring it meets all functional and technical specifications");
+        exp1.setTechnologies("Java 11, Spring Boot");
         
         Experience exp2 = new Experience();
         exp2.setJobTitle("Senior Developer");
-        exp2.setCompanyName("PT. Graha Life Insurance | Jakarta, Indonesia");
+        exp2.setCompanyName("PT. Chubb Life Indonesia");
         exp2.setCompanyLocation("Jakarta, Indonesia");
-        exp2.setStartDate(LocalDate.of(2020, 1, 1));
-        exp2.setEndDate(LocalDate.of(2024, 7, 31));
+        exp2.setStartDate(LocalDate.of(2020, 7, 1));
+        exp2.setEndDate(LocalDate.of(2025, 7, 15));
         exp2.setIsCurrent(false);
         exp2.setDescription("For the past four years, I have served as a senior IT developer, actively " +
                 "engaged in end-to-end handling many of applications within this company.");
@@ -141,8 +143,8 @@ public class DataSeeder implements CommandLineRunner {
         edu1.setFieldOfStudy("Computer Science");
         edu1.setInstitutionName("Sepuluh Nopember Institute of Technology");
         edu1.setInstitutionLocation("Surabaya, Indonesia");
-        edu1.setStartDate(LocalDate.of(2022, 1, 1));
-        edu1.setEndDate(LocalDate.of(2024, 12, 31));
+        edu1.setStartDate(LocalDate.of(2022, 6, 1));
+        edu1.setEndDate(LocalDate.of(2024, 3, 31));
         edu1.setIsCurrent(false);
         edu1.setGpa(new BigDecimal("3.81"));
         edu1.setMaxGpa(new BigDecimal("4.00"));
@@ -354,7 +356,7 @@ public class DataSeeder implements CommandLineRunner {
         Achievement ach1 = new Achievement();
         ach1.setTitle("English Proficiency B2 CEFR Level (480)");
         ach1.setIssuingOrganization("Language Testing Organization");
-        ach1.setIssueDate(LocalDate.of(2023, 1, 1));
+        ach1.setIssueDate(LocalDate.of(2023, 19, 9));
         ach1.setCredentialId("CEFR-B2-480");
         ach1.setDescription("Achieved B2 level English proficiency with score of 480");
         ach1.setAchievementType(Achievement.AchievementType.LANGUAGE_PROFICIENCY);
@@ -363,10 +365,10 @@ public class DataSeeder implements CommandLineRunner {
         ach1.setProfileId(profile.getId());
         
         Achievement ach2 = new Achievement();
-        ach2.setTitle("Presenter Certification for ICTGov 2023");
-        ach2.setIssuingOrganization("ICTGov Conference");
-        ach2.setIssueDate(LocalDate.of(2023, 1, 1));
-        ach2.setCredentialId("ICTGOV-2023-PRESENTER");
+        ach2.setTitle("Presenter Certification for ICICyTa 2023");
+        ach2.setIssuingOrganization("ICICyTa Conference");
+        ach2.setIssueDate(LocalDate.of(2023, 13, 12));
+        ach2.setCredentialId("ICICyTa-2023-PRESENTER");
         ach2.setDescription("Certified presenter at ICTGov 2023 conference");
         ach2.setAchievementType(Achievement.AchievementType.PRESENTATION);
         ach2.setDisplayOrder(2);
@@ -376,20 +378,22 @@ public class DataSeeder implements CommandLineRunner {
         Achievement ach3 = new Achievement();
         ach3.setTitle("Presenter Certification for ICTISEE 2023");
         ach3.setIssuingOrganization("ICTISEE Conference");
-        ach3.setIssueDate(LocalDate.of(2023, 1, 1));
+        ach3.setIssueDate(LocalDate.of(2023, 30, 11));
         ach3.setCredentialId("ICTISEE-2023-PRESENTER");
-        ach3.setDescription("Certified presenter at ICTISEE 2023 conference");
+        ach3.setDescription("Security Characteristic Evaluation of Insurance Agency Portal Based on
+ISO/IEC 25023 Quality Model");
         ach3.setAchievementType(Achievement.AchievementType.PRESENTATION);
         ach3.setDisplayOrder(3);
         ach3.setIsFeatured(true);
         ach3.setProfileId(profile.getId());
         
         Achievement ach4 = new Achievement();
-        ach4.setTitle("Auditor Certification for ICAMIMIA 2023");
+        ach4.setTitle("Author Certification for ICAMIMIA 2023");
         ach4.setIssuingOrganization("ICAMIMIA Conference");
-        ach4.setIssueDate(LocalDate.of(2023, 1, 1));
+        ach4.setIssueDate(LocalDate.of(2023, 15, 11));
         ach4.setCredentialId("ICAMIMIA-2023-AUDITOR");
-        ach4.setDescription("Certified auditor at ICAMIMIA 2023 conference");
+        ach4.setDescription("Ransomware Transaction Detection on the Blockchain with the TabNet
+Model");
         ach4.setAchievementType(Achievement.AchievementType.CERTIFICATION);
         ach4.setDisplayOrder(4);
         ach4.setIsFeatured(true);
@@ -420,7 +424,7 @@ public class DataSeeder implements CommandLineRunner {
         Achievement ach7 = new Achievement();
         ach7.setTitle("Bootcamp Java Developer");
         ach7.setIssuingOrganization("Ahlimata Persada");
-        ach7.setIssueDate(LocalDate.of(2019, 1, 1));
+        ach7.setIssueDate(LocalDate.of(2019, 4, 1));
         ach7.setCredentialId("AHLIMATA-JAVA-2019");
         ach7.setDescription("Completed intensive Java development bootcamp");
         ach7.setAchievementType(Achievement.AchievementType.COURSE_COMPLETION);
@@ -458,7 +462,7 @@ public class DataSeeder implements CommandLineRunner {
         febus.setDescription("Frontend aplikasi pemesanan tiket bus dengan interface yang user-friendly. Fitur pencarian rute, pemilihan kursi, pembayaran online, dan tracking perjalanan real-time.");
         febus.setShortDescription("Frontend aplikasi pemesanan tiket bus dengan UI modern");
         febus.setStartDate(LocalDate.of(2025, 1, 3));
-        febus.setEndDate(LocalDate.of(2025, 1, 3));
+        febus.setEndDate(LocalDate.of(2025, 3, 1));
         febus.setStatus(Project.ProjectStatus.FINISHED);
         febus.setProjectUrl("https://pesanbus.my.id");
         febus.setGithubUrl("https://github.com/MuhammadDarmawanFadilah/febus");
@@ -477,8 +481,8 @@ public class DataSeeder implements CommandLineRunner {
         alumni.setTitle("IKAFK Alumni Management System");
         alumni.setDescription("Sistem manajemen alumni yang komprehensif untuk mengelola data alumni, event, networking, dan komunikasi. Dilengkapi dengan fitur pencarian alumni, direktori, dan sistem notifikasi.");
         alumni.setShortDescription("Sistem manajemen alumni dengan fitur networking");
-        alumni.setStartDate(LocalDate.of(2024, 6, 12));
-        alumni.setEndDate(LocalDate.of(2024, 7, 1));
+        alumni.setStartDate(LocalDate.of(2025, 6, 1));
+        alumni.setEndDate(LocalDate.of(2025, 7, 1));
         alumni.setStatus(Project.ProjectStatus.FINISHED);
         alumni.setProjectUrl("https://ikafk.my.id");
         alumni.setGithubUrl("https://github.com/MuhammadDarmawanFadilah/alumni");
@@ -497,8 +501,8 @@ public class DataSeeder implements CommandLineRunner {
         tbMdr.setTitle("Android TB MDR");
         tbMdr.setDescription("REST API untuk aplikasi mobile monitoring dan pelaporan Tuberkulosis Multi-Drug Resistant. Sistem tracking pasien, jadwal pengobatan, dan laporan medis digital.");
         tbMdr.setShortDescription("REST API untuk aplikasi mobile TB MDR monitoring");
-        tbMdr.setStartDate(LocalDate.of(2023, 9, 1));
-        tbMdr.setEndDate(LocalDate.of(2024, 2, 28));
+        tbMdr.setStartDate(LocalDate.of(2025, 2, 1));
+        tbMdr.setEndDate(LocalDate.of(2025, 10, 28));
         tbMdr.setStatus(Project.ProjectStatus.FINISHED);
         tbMdr.setProjectUrl(null);
         tbMdr.setGithubUrl(null);
@@ -537,8 +541,8 @@ public class DataSeeder implements CommandLineRunner {
         absensi.setTitle("Bawaslu Attendance System");
         absensi.setDescription("Sistem absensi digital untuk Bawaslu Lampung dengan fitur face recognition, GPS tracking, dan laporan kehadiran real-time. Meningkatkan efisiensi dan akurasi pencatatan kehadiran pegawai.");
         absensi.setShortDescription("Sistem absensi digital dengan face recognition");
-        absensi.setStartDate(LocalDate.of(2024, 6, 30));
-        absensi.setEndDate(LocalDate.of(2024, 7, 6));
+        absensi.setStartDate(LocalDate.of(2025, 7, 1));
+        absensi.setEndDate(LocalDate.of(2025, 9, 30));
         absensi.setStatus(Project.ProjectStatus.FINISHED);
         absensi.setProjectUrl("http://absenkantor.my.id");
         absensi.setGithubUrl("https://github.com/MuhammadDarmawanFadilah/absensi");
@@ -557,8 +561,8 @@ public class DataSeeder implements CommandLineRunner {
         pemilihan.setTitle("Election Management System");
         pemilihan.setDescription("Sistem manajemen pemilihan untuk Bawaslu Yogyakarta dengan fitur registrasi kandidat, voting online, real-time counting, dan reporting. Sistem aman dengan enkripsi end-to-end.");
         pemilihan.setShortDescription("Sistem manajemen pemilihan dengan voting online yang aman");
-        pemilihan.setStartDate(LocalDate.of(2022, 10, 1));
-        pemilihan.setEndDate(LocalDate.of(2023, 3, 30));
+        pemilihan.setStartDate(LocalDate.of(2025, 7, 1));
+        pemilihan.setEndDate(LocalDate.of(2025, 7, 15));
         pemilihan.setStatus(Project.ProjectStatus.FINISHED);
         pemilihan.setProjectUrl("#");
         pemilihan.setGithubUrl("https://github.com/MuhammadDarmawanFadilah/pemilihan");

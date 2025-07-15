@@ -50,6 +50,12 @@ public class Experience {
     @Column(name = "display_order")
     private Integer displayOrder;
     
+    @Column(name = "responsibilities")
+    private String responsibilities;
+    
+    @Column(name = "technologies")
+    private String technologies;
+    
     // Temporarily removed to avoid constraint issues
     // @ManyToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "profile_id")
@@ -153,5 +159,21 @@ public class Experience {
     
     public void setProfileId(Long profileId) {
         this.profileId = profileId;
+    }
+    
+    public String getResponsibilities() {
+        return responsibilities;
+    }
+    
+    public void setResponsibilities(String responsibilities) {
+        this.responsibilities = responsibilities;
+    }
+    
+    public String getTechnologies() {
+        return technologies;
+    }
+    
+    public void setTechnologies(String technologies) {
+        this.technologies = technologies;
     }
 }
