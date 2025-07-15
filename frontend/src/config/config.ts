@@ -25,7 +25,7 @@ export const config = {
   
   // Maps
   maps: {
-    url: import.meta.env.VITE_MAPS_URL || 'https://maps.google.com/?q=Banjarnegara,Central+Java,Indonesia',
+    url: import.meta.env.VITE_MAPS_URL || 'https://maps.app.goo.gl/6ahYXYBJYCCWA9e48',
   },
   
   // Development Configuration

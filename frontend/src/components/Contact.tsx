@@ -68,7 +68,7 @@ const Contact = () => {
     {
       icon: <MapPin className="w-6 h-6" />,
       label: 'Location',
-      value: 'Banjarnegara, Central Java, Indonesia',
+      value: 'Griya Satria Indah 02, Blok Mataram No. 19, Purwokerto Utara, Banyumas, Jawa Tengah.',
       href: config.maps.url,
       color: 'from-blue-500 to-cyan-500'
     }
