@@ -356,7 +356,7 @@ public class DataSeeder implements CommandLineRunner {
         Achievement ach1 = new Achievement();
         ach1.setTitle("English Proficiency B2 CEFR Level (480)");
         ach1.setIssuingOrganization("Language Testing Organization");
-        ach1.setIssueDate(LocalDate.of(2023, 19, 9));
+        ach1.setIssueDate(LocalDate.of(2023, 9, 19));
         ach1.setCredentialId("CEFR-B2-480");
         ach1.setDescription("Achieved B2 level English proficiency with score of 480");
         ach1.setAchievementType(Achievement.AchievementType.LANGUAGE_PROFICIENCY);
@@ -367,7 +367,7 @@ public class DataSeeder implements CommandLineRunner {
         Achievement ach2 = new Achievement();
         ach2.setTitle("Presenter Certification for ICICyTa 2023");
         ach2.setIssuingOrganization("ICICyTa Conference");
-        ach2.setIssueDate(LocalDate.of(2023, 13, 12));
+        ach2.setIssueDate(LocalDate.of(2023, 12, 13));
         ach2.setCredentialId("ICICyTa-2023-PRESENTER");
         ach2.setDescription("Certified presenter at ICTGov 2023 conference");
         ach2.setAchievementType(Achievement.AchievementType.PRESENTATION);
@@ -378,10 +378,10 @@ public class DataSeeder implements CommandLineRunner {
         Achievement ach3 = new Achievement();
         ach3.setTitle("Presenter Certification for ICTISEE 2023");
         ach3.setIssuingOrganization("ICTISEE Conference");
-        ach3.setIssueDate(LocalDate.of(2023, 30, 11));
+        ach3.setIssueDate(LocalDate.of(2023, 11, 30));
         ach3.setCredentialId("ICTISEE-2023-PRESENTER");
-        ach3.setDescription("Security Characteristic Evaluation of Insurance Agency Portal Based on
-ISO/IEC 25023 Quality Model");
+        ach3.setDescription("Security Characteristic Evaluation of Insurance Agency Portal Based on " +
+                "ISO/IEC 25023 Quality Model");
         ach3.setAchievementType(Achievement.AchievementType.PRESENTATION);
         ach3.setDisplayOrder(3);
         ach3.setIsFeatured(true);
@@ -390,10 +390,10 @@ ISO/IEC 25023 Quality Model");
         Achievement ach4 = new Achievement();
         ach4.setTitle("Author Certification for ICAMIMIA 2023");
         ach4.setIssuingOrganization("ICAMIMIA Conference");
-        ach4.setIssueDate(LocalDate.of(2023, 15, 11));
+        ach4.setIssueDate(LocalDate.of(2023, 11, 15));
         ach4.setCredentialId("ICAMIMIA-2023-AUDITOR");
-        ach4.setDescription("Ransomware Transaction Detection on the Blockchain with the TabNet
-Model");
+        ach4.setDescription("Ransomware Transaction Detection on the Blockchain with the TabNet " +
+                "Model");
         ach4.setAchievementType(Achievement.AchievementType.CERTIFICATION);
         ach4.setDisplayOrder(4);
         ach4.setIsFeatured(true);
