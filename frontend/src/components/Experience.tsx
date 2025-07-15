@@ -45,48 +45,23 @@ const Experience = () => {
       </section>
     );
   }
-  // Default experiences if no data from API
-  const defaultExperiences = [
-    {
-      id: 1,
-      title: "Senior Developer",
-      company: "PT. Graha Sarana Duta",
-      location: "Jakarta, Indonesia",
-      period: "2020 - Present",
-      duration: "4+ years",
-      type: "Full-time",
-      description: "Leading application development and handling complex enterprise solutions. Responsible for system architecture, code reviews, and mentoring junior developers.",
-      achievements: [
-        "Led development of 15+ enterprise applications",
-        "Improved system performance by 40% through optimization",
-        "Mentored 5+ junior developers",
-        "Implemented CI/CD pipelines reducing deployment time by 60%"
-      ],
-      technologies: ["Java", "Spring Boot", "Oracle", "SQL Server", "Jenkins", "Git", "Angular"],
-      current: true
-    },
-    {
-      id: 2,
-      title: "Junior Java Developer",
-      company: "PT. Askrindo Syariah",
-      location: "Jakarta, Indonesia",
-      period: "2019 - 2020",
-      duration: "1 year",
-      type: "Full-time",
-      description: "Started as a bootcamp graduate and quickly transitioned to a tester role, then developer. Gained hands-on experience in Java development and testing methodologies.",
-      achievements: [
-        "Successfully completed Java bootcamp program",
-        "Transitioned from tester to developer role",
-        "Contributed to 5+ projects",
-        "Learned enterprise development practices"
-      ],
-      technologies: ["Java", "Spring Framework", "MySQL", "JUnit", "Maven"],
-      current: false
-    }
-  ];
+  // Use experiences from profile data or empty array
+  const experiences = profile?.experiences || [];
 
-  // Use default experiences since profile doesn't have experiences property
-  const experiences = defaultExperiences;
+  // Format experience data for display
+  const formattedExperiences = experiences.map((exp: any) => ({
+    id: exp.id,
+    title: exp.jobTitle,
+    company: exp.companyName,
+    location: exp.companyLocation || "Jakarta, Indonesia",
+    period: `${exp.startDate ? new Date(exp.startDate).getFullYear() : ''} - ${exp.isCurrent ? 'Present' : (exp.endDate ? new Date(exp.endDate).getFullYear() : '')}`,
+    duration: exp.isCurrent ? "Current" : "1+ years",
+    type: "Full-time",
+    description: exp.description,
+    achievements: exp.keyAchievements ? exp.keyAchievements.split('\n').filter((item: string) => item.trim()) : [],
+    technologies: exp.technologies ? exp.technologies.split(',').map((tech: string) => tech.trim()) : [],
+    current: exp.isCurrent
+  }));
 
   const skills = [
     { name: "Application Development", icon: <Code className="w-5 h-5" />, color: "bg-blue-500" },
@@ -159,7 +134,7 @@ const Experience = () => {
               <div className="absolute left-4 sm:left-6 lg:left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-500 to-blue-500"></div>
               
               <div className="space-y-8 sm:space-y-10 lg:space-y-12">
-                {experiences.map((exp: any) => (
+                {formattedExperiences.map((exp: any) => (
                   <div key={exp.id} className="relative">
                     {/* Timeline Dot */}
                     <div className={`absolute left-2.5 sm:left-4.5 lg:left-6 w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 sm:border-4 border-white shadow-lg ${

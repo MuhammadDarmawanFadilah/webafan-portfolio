@@ -1,5 +1,22 @@
 import { apiEndpoints } from '../config/config';
 
+interface Experience {
+  id?: number;
+  jobTitle: string;
+  companyName: string;
+  companyLocation: string;
+  startDate: string;
+  endDate: string;
+  isCurrent: boolean;
+  description: string;
+  technologiesUsed: string;
+  keyAchievements: string;
+  displayOrder: number;
+  responsibilities?: string;
+  technologies?: string;
+  profileId: number;
+}
+
 interface Profile {
   id?: number;
   fullName: string;
@@ -26,6 +43,7 @@ interface Profile {
   expertiseAreas?: string; // JSON string
   technicalSkills?: string; // JSON string
   cvFileUrl?: string;
+  experiences?: Experience[]; // Add experiences array
 }
 
 class ProfileService {
@@ -33,11 +51,28 @@ class ProfileService {
 
   async getPublicProfile(): Promise<Profile | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/public`);
-      if (response.ok) {
-        return await response.json();
+      // Fetch profile data
+      const profileResponse = await fetch(`${this.baseUrl}/public`);
+      if (!profileResponse.ok) {
+        return null;
       }
-      return null;
+      const profile = await profileResponse.json();
+      
+      // Fetch experiences data
+      try {
+        const experiencesResponse = await fetch(`${apiEndpoints.experiences.base}`);
+        if (experiencesResponse.ok) {
+          const experiences = await experiencesResponse.json();
+          profile.experiences = experiences;
+        } else {
+          profile.experiences = [];
+        }
+      } catch (experienceError) {
+        console.error('Error fetching experiences:', experienceError);
+        profile.experiences = [];
+      }
+      
+      return profile;
     } catch (error) {
       console.error('Error fetching public profile:', error);
       return null;
@@ -92,4 +127,4 @@ class ProfileService {
 }
 
 export const profileService = new ProfileService();
-export type { Profile };
+export type { Profile, Experience };

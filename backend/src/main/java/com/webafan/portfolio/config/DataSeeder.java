@@ -112,7 +112,6 @@ public class DataSeeder implements CommandLineRunner {
                 "• Gained experience in Agile development");
         exp1.setDisplayOrder(1);
         exp1.setProfileId(profile.getId());
-        // Add missing fields to match the expected JSON structure
         exp1.setResponsibilities("I am responsible for developing comprehensive documentation, including Business Requirements Documents (BRD), Functional Specification Documents (FSD), Technical Specification Documents (TSD), System Guidelines, and detailed Test Cases. Concurrently, I am tasked with designing and developing the website interface for OPIC, our core back-office product, ensuring it meets all functional and technical specifications");
         exp1.setTechnologies("Java 11, Spring Boot");
         
@@ -133,6 +132,8 @@ public class DataSeeder implements CommandLineRunner {
                 "• Developed and maintained complex database integrations");
         exp2.setDisplayOrder(2);
         exp2.setProfileId(profile.getId());
+        exp2.setResponsibilities("Leading application development and handling complex enterprise solutions. Responsible for system architecture, code reviews, and mentoring junior developers. Managing end-to-end application lifecycle from requirements gathering to deployment and maintenance.");
+        exp2.setTechnologies("Java, Spring Boot, Oracle, SQL Server, Angular, Git, Jenkins, SSIS");
         
         experienceRepository.saveAll(List.of(exp1, exp2));
     }
